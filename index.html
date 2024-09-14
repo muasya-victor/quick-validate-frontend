@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+      <meta charset="UTF-8" />
+      <link rel="icon" type="image/svg+xml" href="/logo.png" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>KEJAMOVE CRM</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans&family=Jost:wght@300&display=swap"
+            rel="stylesheet">
+      <style>
+          body {
+              color:black;
+              font-family: 'Josefin Sans', 'Jost', sans-serif;
+          }
+      </style>
+  </head>
+  <body color-scheme="dark">
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    <script>
+      // import config from "@/utility/configs.json"
+      (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        // js.src = "https://connect.facebook.net/en_US/sdk.js";
+        js.src = `https://connect.facebook.net/en_US/sdk.js#version=v2.2&appId=8122791687735303&xfbml=true`;
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
+
+    </script>
+  </body>
+</html>
