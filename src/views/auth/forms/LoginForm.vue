@@ -6,28 +6,22 @@
     class="w-full flex flex-col gap-4"
     label-position="top"
   >
-    <div class="flex gap-2 items-center">
-      <h1 class="font-bold text-2xl text-[#0b1e17]">{{projectName}}</h1>
+    <div class="flex gap-2 items-start">
+<!--      <h1 class="font-bold text-2xl text-blue-500">{{projectName}}</h1>-->
+      <img src="/logo.png" alt="quick validate logo" class="w-20">
     </div>
 
-    <h2 class="font-bold text-gray-400">Sign In</h2>
-
-    <el-form-item label="Email" prop="email"
+    <el-form-item label="Username" prop="username"
          :rules="[
             {
               required: true,
-              message: 'Please input email address',
+              message: 'Please input username',
               trigger: 'blur',
-            },
-            {
-              type: 'email',
-              message: 'Please input correct email address',
-              trigger: 'blur',
-            },
+            }
          ]"
     >
       <el-input
-        v-model="form.email"
+        v-model="form.username"
         :prefix-icon="UserIcon"
         placeholder="email"
         size="large"
@@ -103,7 +97,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       store
         .dispatch("postData", {
-          url: "users/token",
+          url: "token/request",
           data: form
         })
         .then((resp) => {
@@ -114,52 +108,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
            * Redirect based on user type
            *
            */
-          const user = resp.data?.user;
-
-
-          if (user.role == 'sales_person' ||
-              user.role == 'marketing_person'  && user.branch_id !== null) {
-                console.log("user", user)
-                router.push({name: 'moves'});
-          }else if (user.role == 'sales_person' ||
-              user.role == 'marketing_person' && user.branch_id == null) {
-
-            ElNotification({
-              title: 'Error',
-              type: "error",
-              position: "top-right",
-              message: 'No Branch Associated.'
-            })
-          }
-
-          if (user.role == 'admin' || user.user_type == 'organization_manager') {
-            if (user.role == 'organization_manager' && user.organization == null) {
-              ElNotification({
-                title: 'Error',
-                type: "error",
-                position: "top-right",
-                message: 'No Firm Associated'
-              })
-
-              return;
-            }
-
-            router.push({name: 'welcome'});
-          }
-
-          if (user.role == 'branch_manager' && user.branch_id !== null) {
-            router.push({name: 'branch-view', params: {
-              id: user?.branch_id}});
-          }
-          else if (user.role == 'branch_manager' && user.branch_id == null){
-            ElNotification({
-              title: 'Error',
-              type: "error",
-              position: "top-right",
-              message: 'No Branch Associated'
-            })
-          }
-
+          router.push({name:'blank'})
         })
           .catch((err)=>{
             loginLoading.value = false;
