@@ -41,7 +41,7 @@
     <div class="flex w-full ">
       <el-button
         :loading="loginLoading"
-        class="w-fit "
+        class="w-full "
         size="large"
         style="border-radius: 4px"
         type="primary"
@@ -49,7 +49,7 @@
       >
         <!--                @click="submitForm(loginFormRef)"-->
 
-        Login
+        Sign In
       </el-button>
     </div>
     <div class="text-sm hidden">
