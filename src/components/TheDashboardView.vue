@@ -52,7 +52,7 @@ watch(route, updateBreadcrumbs, { immediate: true });
 <!--    h-[70px]-->
       <div class=" w-full flex border-b items-center justify-between gap-4 px-4">
 
-        <div class=" h-[70px] w-[200px]  flex items-center  text-center text-2xl font-bold text-blue-500">
+        <div class="hidden h-[70px] w-[200px]  flex items-center  text-center text-2xl font-bold text-blue-500">
          Quick Validate
         </div>
 
@@ -137,7 +137,7 @@ watch(route, updateBreadcrumbs, { immediate: true });
           <TheSideNav/>
         </div>
 
-        <div :style="routerViewStyle" class="flex-1 p-4 bg-gray-50 overflow-x-hidden overflow-y-auto h-full ">
+        <div :style="routerViewStyle" class="flex-1  bg-gray-50 overflow-x-hidden overflow-y-auto h-full ">
           <el-breadcrumb separator="/"
                          :style="breadcrumbStyle"
                          class="md:hidden" >
@@ -147,7 +147,10 @@ watch(route, updateBreadcrumbs, { immediate: true });
             </el-breadcrumb-item>
           </el-breadcrumb>
 
-          <router-view :style="routerViewStyle"/>
+          <div class="bg-gray-50 h-full w-full">
+            <router-view :style="routerViewStyle"/>
+          </div>
+
         </div>
 
       </div>

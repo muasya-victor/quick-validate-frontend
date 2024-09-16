@@ -36,121 +36,6 @@
               type="email"
           />
         </el-form-item>
-        <el-form-item v-if="route.name !== 'edit-user'" label="Password" prop="password">
-          <el-input
-              v-model="form.password"
-              :prefix-icon="LockClosedIcon"
-              placeholder="password"
-              show-password
-              size="large"
-              type="password"
-          />
-        </el-form-item>
-        <el-form-item v-if="route.name !== 'edit-user'" label="Password Confirmation" prop="password_confirmation"
-            :rules="[
-              {
-                required: true,
-                trigger: 'blur',
-                message: 'Please enter password',
-              },
-              {
-                validator: validatePassword
-              }
-          ]"
-            >
-          <el-input
-              v-model="form.password_confirmation"
-              :prefix-icon="LockClosedIcon"
-              placeholder="password"
-              show-password
-              size="large"
-              type="password"
-          />
-        </el-form-item>
-        <el-form-item label="User Type" prop="role" class="w-full">
-          <el-select
-              clearable
-              v-model="form.role"
-              placeholder="Select"
-              size="large"
-          >
-            <el-option
-                v-for="item in user_types"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Phone Number" prop="phone_number" class="w-full"
-                      :rules="[
-              {
-                required: true,
-                trigger: 'blur',
-                message: 'Please enter a valid phone number',
-              },
-              {
-                validator: validatePhoneNumber
-              }
-          ]"
-        >
-          <el-input
-              v-model="form.phone_number"
-              style="max-width: 600px"
-              placeholder="Please input phone number"
-              class="input-with-select"
-              type="number"
-          >
-            <template #prepend>
-              <el-select v-model="form.country_code"
-                         placeholder="Country Code" style="width: 60px">
-                <el-option label="+254" value="+254" />
-                <el-option label="+255" value="+255" />
-              </el-select>
-            </template>
-          </el-input>
-        </el-form-item>
-        <el-form-item label="Organization" prop="organization" class="w-full">
-          <el-select
-              v-model="form.organization"
-              clearable
-              @focus="fetchStores"
-              @change="clearBranch"
-              :loading="storeLoading"
-              placeholder="Organization To Which a user belongs"
-              size="large"
-          >
-            <template #loading>
-              <BaseLoader/>
-            </template>
-            <el-option
-                v-for="item in registeredStores"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Branch **Optional" prop="branch" class="w-full" v-if="form.firm_id">
-          <el-select
-              v-model="form.branch_id"
-              clearable
-              @focus="fetchBranches"
-              :loading="branchLoading"
-              placeholder="Branch To Which a user belongs"
-              size="large"
-          >
-            <template #loading>
-              <BaseLoader/>
-            </template>
-            <el-option
-                v-for="item in registeredBranches"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-            />
-          </el-select>
-        </el-form-item>
       </div>
 
 
@@ -164,7 +49,7 @@
           html-type="submit"
           @click="submitForm(ruleForm)"
         >
-          Register
+          Update Profile
         </el-button>
       </div>
       <div class="text-sm hidden">
@@ -212,34 +97,23 @@ const rules = reactive<FormRules>({
   },
 });
 
-const clearBranch = ()=>{
-  if(form.value.hasOwnProperty('branch_id')) {
-    delete form.value.branch_id
-  }
+const authData = JSON.parse(localStorage.getItem("authData"))?.user;
+
+const setData = () => {
+  form.value = authData
 }
 
 const submitForm = async (formEl: FormInstance | undefined) => {
   submitLoading.value = true;
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
-    console.log(fields,'fields')
     if (valid) {
-      if (route.name == 'register-user') {
-        pushDataToDatabase('postData','users', form)
-      }
+      store.dispatch("patchData", {url: 'user',
+        data:form.value,
+        id:authData?.id}).then((response) => {
+        submitLoading.value = false
 
-      if (route.name == 'edit-user') {
-        // console.log(form.value.firm_id.value, 'form')
-        let payload = {...form.value, branch_id:form.value.branch_id}
-        console.log(form.value.branch_id, 'payload')
-
-
-        // pushDataToDatabase('putData','users', payload, route?.params?.id)
-        store.dispatch("putData", {url: 'users', data:payload, id:route?.params.id}).then((response) => {
-              submitLoading.value = false
-
-        })
-      }
+      })
     } else {
       submitLoading.value = false;
     }
@@ -322,50 +196,9 @@ const fetchStores = ()=>{
 const registeredBranches = ref([])
 const branchLoading = ref(false)
 
-const fetchBranches = ()=>{
-  branchLoading.value= true
-  registeredBranches.value = []
-
-  let newUrl = `firms/${form.value?.organization}/branches`
-
-  if (route.name == 'edit-user') {
-    // console.log(form.value?.firm_id?.value)
-    newUrl = `firms/${form.value?.firm_id}/branches`
-  }
-
-  store.dispatch('fetchList', {url:newUrl})
-      .then((resp)=>{
-        registeredBranches.value = resp?.data
-
-        // registeredBranches.value = resp.data
-        branchLoading.value= false
-      })
-      .catch(err=>{
-        branchLoading.value= false
-      })
-}
 
 const fetchOnMount = ()=>{
-  if (route.name == 'edit-user') {
-    fetchStores()
-    store.dispatch('fetchSingleItem', {url:`users`, id:route?.params?.id}).then((res)=>{
-      // fill firm Data
-      if (res.data?.firm_id) {
-        store.dispatch('fetchSingleItem', {url:`firms`, id: res?.data.organization}).then((resp)=>{
-          form.value.organization = {value: resp.data.id, label:resp.data?.name}
-        })
-      }
-
-      // fill branch data
-      if (res.data?.branch_id) {
-        store.dispatch('fetchSingleItem', {url:`branches`, id: res?.data.branch_id}).then((resp)=>{
-          form.value.branch_id = {value: resp.data.id, label:resp.data?.name}
-        })
-      }
-      form.value = res?.data
-      console.log(res.data.user)
-    })
-  }
+  setData()
 }
 
 onMounted(()=>{

@@ -8,6 +8,7 @@ import UserCreateEdit from "@/views/users/UserCreateEdit.vue";
 
 import BlankPage from "@/components/BlankPage.vue";
 import Employees from "@/views/profile/Employees.vue";
+import UserProfile from "@/views/profile/UserProfile.vue";
 
 const routes = [
   {
@@ -38,15 +39,6 @@ const routes = [
     },
     children : [
         {
-          name: 'edit-user',
-          path: 'profile',
-          component: UserCreateEdit,
-          requiresAuth: true,
-          meta: {
-            slug: 'Edit Profile',
-          },
-        },
-        {
           name: 'invoice',
           path: 'invoice',
           component: Employees,
@@ -62,6 +54,15 @@ const routes = [
           requiresAuth: true,
           meta: {
             slug: 'Blank Page',
+          },
+        },
+        {
+          name: 'profile',
+          path: 'profile',
+          component: UserProfile,
+          requiresAuth: true,
+          meta: {
+            slug: 'Profile',
           },
         },
       ]
