@@ -5,7 +5,7 @@ import QuickBookAuthenticationForm from "@/views/auth/QuickBookAuthenticationFor
 </script>
 
 <template>
-  <div class="w-full h-full bg-transparent p-4 flex flex-col gap-6">
+  <div class="w-full h-full bg-transparent p-4 flex flex-col gap-6 pb-4">
     <h1 class="text-lg font-semibold">Personal Profile</h1>
 
     <RegisterForm/>

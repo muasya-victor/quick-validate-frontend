@@ -94,6 +94,13 @@ const setData = () => {
 
 const submitLoading = ref(false);
 
+const fetchQuickBookDetails = ()=>{
+  store.dispatch('fetchList', {url:`quickbook-authentication?user=${authData?.id}`})
+      .then((res)=>{
+        form.value = res.data?.results[0]
+      })
+}
+
 const submitForm = async (formEl: FormInstance | undefined) => {
   submitLoading.value = true;
   if (!formEl) return;
@@ -101,7 +108,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       store.dispatch("patchData", {url: 'quickbook-authentication',
         data:form.value,
-        id:authData?.id}).then((response) => {
+        id:form.value?.id}).then((response) => {
         submitLoading.value = false
 
       })
@@ -113,12 +120,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 };
 
 const fetchOnMount = ()=>{
-  setData()
+  fetchQuickBookDetails()
 }
 
 onMounted(()=>{
-  // fetchStores()
-  // fetchOnMount()
+  fetchOnMount()
 })
 
 </script>
