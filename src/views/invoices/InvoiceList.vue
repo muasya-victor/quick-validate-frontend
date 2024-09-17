@@ -37,7 +37,7 @@ const attemptKraValidation = (invoice_number)=>{
 }
 
 const form = ref({
-  invoice_number:58585
+  invoice_number:1020
 })
 const postManually = ref(true)
 const showValidatedInvoice = ref(false)
@@ -88,33 +88,38 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     </div>
 
 
-    <div class="py-4">
+    <div class="py-4 h-full">
       <el-switch
           active-text="Use Invoice Number To Validate"
           inactive-text="Validate From List"
           v-model="postManually"/>
 
-      <el-form v-if="postManually"
-               label-position="top"
-               :model="form"
-               ref="ruleForm"
-               label-width="100px">
-        <el-form-item label="Invoice Number"
-                      prop="invoice_number"
-                      class="w-full md:w-[200px]">
-          <el-input-number
-              style="width: 100%"
-              v-model="form.invoice_number"/>
-        </el-form-item>
+      <div v-if="postManually" class="w-full flex items-start justify-start h-full py-4">
+        <el-form
+                 label-position="top"
+                 :model="form"
+                 ref="ruleForm"
+                 label-width="100px">
+          <el-form-item label="Invoice Number"
+                        prop="invoice_number"
+                        class="w-full md:w-[200px]">
+            <el-input-number
+                size="large"
+                style="width: 100%"
+                v-model="form.invoice_number"/>
+          </el-form-item>
 
-        <el-button
-            class="w-full md:w-[200px]"
-            :loading="submitLoading"
-            @click="submitForm(ruleForm)"
-            type="primary"
+          <el-button
+              class="w-full md:w-[200px]"
+              size="large"
+              :loading="submitLoading"
+              @click="submitForm(ruleForm)"
+              type="primary"
           >Validate Invoice
-        </el-button>
-      </el-form>
+          </el-button>
+        </el-form>
+      </div>
+
     </div>
 
     <BaseDataTable

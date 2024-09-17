@@ -35,21 +35,14 @@ api.interceptors.response.use(undefined, function (err) {
             const quickbooksErrorCode = fault?.error?.[0]?.code;
             const extractedMessage = quickbooksErrorMessage?.match(/message=([^;]*)/)?.[1];
 
+            // console.log('fault', response.data);
 
-            if (fault && fault?.type === 'AUTHENTICATION') {
+            if (fault ) {
                 ElNotification({
                     title: 'Error',
                     type: "error",
                     position: "top-right",
                     message: `${extractedMessage} Quick Books`,
-                });
-            }
-            else {
-                ElNotification({
-                    title: 'Error',
-                    type: "error",
-                    position: "top-right",
-                    message: `${extractedMessage?.resultMsg} Quick Books`,
                 });
             }
 
