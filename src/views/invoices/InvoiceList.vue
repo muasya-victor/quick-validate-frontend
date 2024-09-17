@@ -41,7 +41,7 @@ const form = ref({
 })
 const postManually = ref(true)
 const showValidatedInvoice = ref(false)
-const validatedInvoicePdfUrl = ref('https://advatech.up.railway.app/media/verified_invoices/verified_invoice_id_187.pdf')
+const validatedInvoicePdfUrl = ref('')
 const submitLoading = ref(false);
 
 const handleDialogClose = ()=> {
