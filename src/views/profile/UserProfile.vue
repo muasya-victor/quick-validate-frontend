@@ -2,6 +2,7 @@
 
 import RegisterForm from "@/views/auth/forms/RegisterForm.vue";
 import QuickBookAuthenticationForm from "@/views/auth/QuickBookAuthenticationForm.vue";
+import KraSetup from "@/views/kra/KraSetup.vue";
 </script>
 
 <template>
@@ -16,6 +17,11 @@ import QuickBookAuthenticationForm from "@/views/auth/QuickBookAuthenticationFor
 
 
     <QuickBookAuthenticationForm/>
+
+    <h1 class="text-lg font-semibold">KRA Credentials</h1>
+
+
+    <KraSetup/>
   </div>
 
 </template>

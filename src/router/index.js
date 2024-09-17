@@ -9,6 +9,12 @@ import UserCreateEdit from "@/views/users/UserCreateEdit.vue";
 import BlankPage from "@/components/BlankPage.vue";
 import Employees from "@/views/profile/Employees.vue";
 import UserProfile from "@/views/profile/UserProfile.vue";
+import ProductSettingsForm from "@/views/kra/KraSetup.vue";
+import SettingsView from "@/views/settings/SettingsView.vue";
+import RegisterForm from "@/views/auth/forms/RegisterForm.vue";
+import QuickBookAuthenticationForm from "@/views/auth/QuickBookAuthenticationForm.vue";
+import KraSetup from "@/views/kra/KraSetup.vue";
+import InvoiceList from "@/views/invoices/InvoiceList.vue";
 
 const routes = [
   {
@@ -39,13 +45,51 @@ const routes = [
     },
     children : [
         {
-          name: 'invoice',
-          path: 'invoice',
-          component: Employees,
+          name: 'invoice-list',
+          path: 'invoice-list',
+          component: InvoiceList,
           requiresAuth: true,
           meta: {
-            slug: 'Invoices',
+            slug: 'Invoice List',
           },
+        },
+        {
+          name: 'settings',
+          path: 'settings',
+          component: SettingsView,
+          requiresAuth: true,
+          meta: {
+            slug: 'Settings',
+          },
+          children: [
+            {
+              name: 'personal-profile',
+              path: 'personal-profile',
+              component: RegisterForm,
+              requiresAuth: true,
+              meta: {
+                slug: 'Personal Profile',
+              },
+            },
+            {
+              name: 'quickbooks-profile',
+              path: 'quickbooks-profile',
+              component: QuickBookAuthenticationForm,
+              requiresAuth: true,
+              meta: {
+                slug: 'QuickBooks Profile',
+              },
+            },
+            {
+              name: 'kra-profile',
+              path: 'kra-profile',
+              component: KraSetup,
+              requiresAuth: true,
+              meta: {
+                slug: 'Kra Profile',
+              },
+            },
+          ]
         },
         {
           name: 'blank',
