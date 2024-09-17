@@ -94,7 +94,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           inactive-text="Validate From List"
           v-model="postManually"/>
 
-      <div v-if="postManually" class="w-full flex items-start justify-start h-full py-4">
+      <div v-if="postManually" class="w-full flex items-start justify-start h-fit py-4">
         <el-form
                  label-position="top"
                  :model="form"
