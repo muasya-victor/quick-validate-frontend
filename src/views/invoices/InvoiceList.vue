@@ -39,7 +39,7 @@ const attemptKraValidation = (invoice_number)=>{
 const form = ref({
   invoice_number:1020
 })
-const postManually = ref(true)
+const postManually = ref(false)
 const showValidatedInvoice = ref(false)
 const validatedInvoicePdfUrl = ref('')
 const submitLoading = ref(false);
@@ -88,13 +88,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     </div>
 
 
-    <div class="py-4 h-full">
+    <div class="py-4">
       <el-switch
           active-text="Use Invoice Number To Validate"
           inactive-text="Validate From List"
           v-model="postManually"/>
 
-      <div v-if="postManually" class="w-full flex items-start justify-start h-fit py-4">
+      <div v-if="postManually" class="py-4">
         <el-form
                  label-position="top"
                  :model="form"
