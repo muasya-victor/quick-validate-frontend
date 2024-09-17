@@ -51,8 +51,6 @@ import { LockClosedIcon, UserIcon } from "@heroicons/vue/24/solid";
 import { FormInstance, FormRules } from "element-plus";
 import store from "@/store";
 import router from "@/router";
-import { FolderOpened } from '@element-plus/icons-vue'
-import BaseLoader from "@/components/base/BaseLoader.vue";
 import {useRoute} from "vue-router"
 
 const route = useRoute()

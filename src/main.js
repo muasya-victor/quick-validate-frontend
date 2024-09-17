@@ -44,6 +44,16 @@ api.interceptors.response.use(undefined, function (err) {
                     message: `${extractedMessage} Quick Books`,
                 });
             }
+
+            const kraInvoiceExisistsError = response.data?.error;
+            if (kraInvoiceExisistsError) {
+                ElNotification({
+                    title: 'Error',
+                    type: "error",
+                    position: "top-right",
+                    message: kraInvoiceExisistsError.resultMsg || 'An error occurred',
+                });
+            }
         }
 
         if (response.status === 401) {
