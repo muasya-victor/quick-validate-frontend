@@ -39,8 +39,8 @@ const attemptKraValidation = (invoice_number)=>{
 const form = ref({
   invoice_number:58585
 })
-const postManually = ref(false)
-const showValidatedInvoice = ref(true)
+const postManually = ref(true)
+const showValidatedInvoice = ref(false)
 const validatedInvoicePdfUrl = ref('https://advatech.up.railway.app/media/verified_invoices/verified_invoice_id_187.pdf')
 const submitLoading = ref(false);
 
