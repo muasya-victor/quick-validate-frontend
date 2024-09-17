@@ -20,7 +20,13 @@ export function raiseError (text)
     })
 }
 export function raiseServerError(err) {
-    if (err && err.response && err.response.data) {
+    console.log(err.response.status, 'err resp');
+
+    if (err.response.status ===400){
+        return
+    }
+
+    if (err && err.response && err.response.data ) {
         if (err.response.data.errors) {
             // Handle the specific error structure you provided
             const errors = err.response.data.errors;

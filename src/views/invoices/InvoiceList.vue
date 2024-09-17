@@ -1,10 +1,13 @@
-<script setup>
+<script setup lang="ts">
 import {ArrowRight, Delete, EditPen} from "@element-plus/icons-vue";
 import BaseDataTable from "@/components/base/BaseDataTable.vue";
-import {ref} from "vue"
+import {reactive, ref} from "vue"
 import router from "@/router/index.js";
 import store from "@/store/index.js";
+import {FormInstance, FormRules} from "element-plus";
 
+const ruleForm = ref<FormInstance>();
+const rules = reactive<FormRules>({});
 const columns = ref([
   {
     title: "Invoice Number",
@@ -29,8 +32,34 @@ const columns = ref([
 ]);
 
 const attemptKraValidation = (invoice_number)=>{
-  store.dispatch('postData', {data: invoice_number});
+  store.dispatch('postData', {data: invoice_number, url:"invoice"});
 }
+
+const form = ref({
+  invoice_number:58585
+})
+const postManually = ref(false)
+const submitLoading = ref(false);
+
+const submitForm = async (formEl: FormInstance | undefined) => {
+  submitLoading.value = true;
+  console.log(form.value, 'form')
+  if (!formEl) return;
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      store.dispatch("postData", {url: 'invoice',
+        data:form.value}).then((response) => {
+        submitLoading.value = false
+
+      })
+    } else {
+      submitLoading.value = false;
+    }
+    submitLoading.value = false;
+  });
+};
+
+
 
 </script>
 
@@ -38,9 +67,38 @@ const attemptKraValidation = (invoice_number)=>{
   <div class=" h-full w-full">
     <router-view/>
 
+    <div class="py-4">
+      <el-switch
+          active-text="Post Manually"
+          inactive-text="Post From List"
+          v-model="postManually"/>
+
+      <el-form v-if="postManually"
+               label-position="top"
+               :model="form"
+               ref="ruleForm"
+               label-width="100px">
+        <el-form-item label="Invoice Number"
+                      prop="invoice_number"
+                      class="w-full md:w-[200px]">
+          <el-input-number
+              v-model="form.invoice_number"/>
+        </el-form-item>
+
+        <el-button
+            class="w-full md:w-[200px]"
+            :loading="submitLoading"
+            @click="submitForm(ruleForm)"
+            type="primary"
+          >Validate Invoice
+        </el-button>
+      </el-form>
+    </div>
+
     <BaseDataTable
         :columns="columns"
         :fetch-url="invoice"
+        v-if="!postManually"
         title="Invoices">
 
 

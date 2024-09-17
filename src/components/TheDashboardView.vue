@@ -137,7 +137,7 @@ watch(route, updateBreadcrumbs, { immediate: true });
           <TheSideNav/>
         </div>
 
-        <div :style="routerViewStyle" class="flex-1  bg-gray-50 overflow-x-hidden overflow-y-auto h-full ">
+        <div :style="routerViewStyle" class="flex-1 p-2 md:pt-0 bg-gray-50 overflow-x-hidden overflow-y-auto h-full ">
           <el-breadcrumb separator="/"
                          :style="breadcrumbStyle"
                          class="md:hidden" >
