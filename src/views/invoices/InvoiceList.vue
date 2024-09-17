@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ArrowRight, Delete, EditPen} from "@element-plus/icons-vue";
 import BaseDataTable from "@/components/base/BaseDataTable.vue";
+import ValidatedInvoice from "@/views/invoices/ValidatedInvoice.vue";
 import {reactive, ref} from "vue"
 import router from "@/router/index.js";
 import store from "@/store/index.js";
@@ -39,21 +40,32 @@ const form = ref({
   invoice_number:58585
 })
 const postManually = ref(false)
+const showValidatedInvoice = ref(true)
+const validatedInvoicePdfUrl = ref('https://advatech.up.railway.app/media/verified_invoices/verified_invoice_id_187.pdf')
 const submitLoading = ref(false);
+
+const handleDialogClose = ()=> {
+  showValidatedInvoice.value = false
+}
 
 const submitForm = async (formEl: FormInstance | undefined) => {
   submitLoading.value = true;
   console.log(form.value, 'form')
+  validatedInvoicePdfUrl.value = '';
+
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
       store.dispatch("postData", {url: 'invoice',
         data:form.value}).then((response) => {
+        showValidatedInvoice.value = true;
+          validatedInvoicePdfUrl.value = response.data?.download_url;
         submitLoading.value = false
 
       })
     } else {
       submitLoading.value = false;
+      showValidatedInvoice.value = true;
     }
     submitLoading.value = false;
   });
@@ -66,6 +78,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 <template>
   <div class=" h-full w-full">
     <router-view/>
+
+    <div
+        v-if="showValidatedInvoice"
+    >
+      <ValidatedInvoice
+          @close-dialog="handleDialogClose"
+          :download-url="validatedInvoicePdfUrl"/>
+    </div>
+
 
     <div class="py-4">
       <el-switch
