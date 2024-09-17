@@ -97,7 +97,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
     <BaseDataTable
         :columns="columns"
-        :fetch-url="invoice"
+        fetch-url="invoice"
         v-if="!postManually"
         title="Invoices">
 

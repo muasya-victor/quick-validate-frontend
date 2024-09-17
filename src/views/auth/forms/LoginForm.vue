@@ -104,11 +104,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           localStorage.setItem("authData", JSON.stringify(resp.data));
           loginLoading.value = false;
 
-          /**
-           * Redirect based on user type
-           *
-           */
-          router.push({name:'blank'})
+          router.push({name:'invoice-list'})
         })
           .catch((err)=>{
             loginLoading.value = false;
