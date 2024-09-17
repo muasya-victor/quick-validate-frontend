@@ -15,6 +15,8 @@ import RegisterForm from "@/views/auth/forms/RegisterForm.vue";
 import QuickBookAuthenticationForm from "@/views/auth/QuickBookAuthenticationForm.vue";
 import KraSetup from "@/views/kra/KraSetup.vue";
 import InvoiceList from "@/views/invoices/InvoiceList.vue";
+import ValidatedInvoice from "@/views/invoices/ValidatedInvoice.vue";
+import ManualInvoiceValidation from "@/views/invoices/ManualInvoiceValidation.vue";
 
 const routes = [
   {
@@ -52,7 +54,35 @@ const routes = [
           meta: {
             slug: 'Invoice List',
           },
+          children: [
+            {
+              name: 'validated-invoice',
+              path: 'validated-invoice',
+              component: InvoiceList,
+              requiresAuth: true,
+              meta: {
+                slug: 'Invoice List',
+              },
+            }
+          ]
         },
+      {
+        name: 'validated-invoice',
+        path: 'validated-invoice',
+        component: ValidatedInvoice,
+        requiresAuth: true,
+        meta: {
+          slug: 'Invoice List',
+        },
+      },  {
+        name: 'manual-validation',
+        path: 'manual-validation',
+        component: ManualInvoiceValidation,
+        requiresAuth: true,
+        meta: {
+          slug: 'Manual Validation',
+        },
+      },
         {
           name: 'settings',
           path: 'settings',

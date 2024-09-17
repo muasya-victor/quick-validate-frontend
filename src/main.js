@@ -54,6 +54,16 @@ api.interceptors.response.use(undefined, function (err) {
                     message: kraInvoiceExisistsError.resultMsg || 'An error occurred',
                 });
             }
+
+            const invoiceDataNotFound = response.data
+            if (invoiceDataNotFound) {
+                ElNotification({
+                    title: 'Error',
+                    type: "error",
+                    position: "top-right",
+                    message: invoiceDataNotFound?.error || 'An error occurred',
+                });
+            }
         }
 
         if (response.status === 401) {

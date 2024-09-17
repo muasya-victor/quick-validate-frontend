@@ -69,8 +69,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
     <div class="py-4">
       <el-switch
-          active-text="Post Manually"
-          inactive-text="Post From List"
+          active-text="Use Invoice Number To Validate"
+          inactive-text="Validate From List"
           v-model="postManually"/>
 
       <el-form v-if="postManually"
@@ -82,6 +82,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
                       prop="invoice_number"
                       class="w-full md:w-[200px]">
           <el-input-number
+              style="width: 100%"
               v-model="form.invoice_number"/>
         </el-form-item>
 

@@ -141,7 +141,7 @@ const setData = () => {
 const submitLoading = ref(false);
 
 const fetchQuickBookDetails = ()=>{
-  store.dispatch('fetchList', {url:`quickbook-authentication?user=${authData?.id}`})
+  store.dispatch('fetchList', {url:`product-details?user=${authData?.id}`})
       .then((res)=>{
         form.value = res.data?.results[0]
       })
@@ -152,7 +152,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      store.dispatch("patchData", {url: 'quickbook-authentication',
+      store.dispatch("patchData", {url: 'product-details',
         data:form.value,
         id:form.value?.id}).then((response) => {
         submitLoading.value = false
