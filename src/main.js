@@ -53,8 +53,9 @@ api.interceptors.response.use(undefined, function (err) {
                     title: 'Error',
                     type: "error",
                     position: "top-right",
-                    message: kraInvoiceExisistsError.resultMsg || 'An error occurred',
+                    message: `KRA - ${kraInvoiceExisistsError.resultMsg}` || 'An error occurred',
                 });
+                return;
             }
 
             const invoiceDataNotFound = response.data
@@ -63,7 +64,7 @@ api.interceptors.response.use(undefined, function (err) {
                     title: 'Error',
                     type: "error",
                     position: "top-right",
-                    message: invoiceDataNotFound?.error || 'An error occurred',
+                    message: `KRA- ${invoiceDataNotFound?.error}` || 'An error occurred',
                 });
             }
         }
