@@ -37,13 +37,14 @@ api.interceptors.response.use(undefined, function (err) {
 
             // console.log('fault', response.data);
 
-            if (fault ) {
+            if (quickbooksErrorMessage ) {
                 ElNotification({
                     title: 'Error',
                     type: "error",
                     position: "top-right",
-                    message: `${extractedMessage} Quick Books`,
+                    message: `Quick Book - ${extractedMessage}`,
                 });
+                return
             }
 
             const kraInvoiceExisistsError = response.data?.error;

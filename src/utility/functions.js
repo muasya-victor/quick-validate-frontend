@@ -19,6 +19,7 @@ export function raiseError (text)
         message: text
     })
 }
+
 export function raiseServerError(err) {
     console.log(err.response.status, 'err resp');
 
@@ -84,11 +85,20 @@ export function formatDate(dateString) {
     if (isNaN(date)) return '';
 
     // Options for formatting the date
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
 
-    // Return the formatted date
-    return date.toLocaleDateString(undefined, options);
+    // Check if the time portion is present
+    const hasTime = dateString.includes('T') || dateString.includes(':');
+
+    if (hasTime) {
+        const timeOptions = { hour: 'numeric', minute: 'numeric', hour12: true };
+        return `${date.toLocaleDateString(undefined, dateOptions)} ${date.toLocaleTimeString(undefined, timeOptions)}`;
+    }
+
+    // Return the formatted date without time
+    return date.toLocaleDateString(undefined, dateOptions);
 }
+
 
 export function deleteLocalStorageInformation(){
     localStorage.removeItem("authData")

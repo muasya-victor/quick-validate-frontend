@@ -6,6 +6,7 @@ import {reactive, ref} from "vue"
 import router from "@/router/index.js";
 import store from "@/store/index.js";
 import {FormInstance, FormRules} from "element-plus";
+import {formatDate} from "@/utility/functions"
 
 const ruleForm = ref<FormInstance>();
 const rules = reactive<FormRules>({});
@@ -17,13 +18,13 @@ const columns = ref([
   },
   {
     title: "Date Created",
-    dataIndex: "date_created",
-    key: "date_created",
+    dataIndex: "created_date",
+    key: "created_date",
   },
   {
     title: "Date Updated",
-    dataIndex: "date_updated",
-    key: "date_updated",
+    dataIndex: "updated_date",
+    key: "updated_date",
   },
   {
     title: "Actions",
@@ -33,7 +34,7 @@ const columns = ref([
 ]);
 
 const attemptKraValidation = (invoice_number)=>{
-  store.dispatch('postData', {data: invoice_number, url:"invoice"});
+  store.dispatch('postData', {data: {"invoice_number": invoice_number}, url:"invoice"});
 }
 
 const form = ref({
@@ -131,6 +132,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
       <template v-slot:bodyCell="slotProps">
 
+        <template v-if="slotProps.column.key === 'created_date'">
+          {{formatDate(slotProps.text)}}
+        </template>
+        <template v-if="slotProps.column.key === 'updated_date'">
+          {{formatDate(slotProps.text)}}
+        </template>
+
         <template v-if="slotProps.column.key === 'is_active'">
           <el-tag size="large" type="success" v-if="slotProps.text === true" class="capitalize">
             {{slotProps.text}}
@@ -145,7 +153,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           <!--                      {{ slotProps.text }}-->
 
           <ElButton type="primary"
-                    @click="attemptKraValidation('edit-user', slotProps.text?.id)"
+                    @click="attemptKraValidation(slotProps.text?.invoice_number)"
                     size="default"
                     plain>
             <template #icon>
