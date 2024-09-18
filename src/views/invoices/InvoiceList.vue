@@ -2,7 +2,7 @@
 import {ArrowRight, Delete, Download, EditPen, Open} from "@element-plus/icons-vue";
 import BaseDataTable from "@/components/base/BaseDataTable.vue";
 import ValidatedInvoice from "@/views/invoices/ValidatedInvoice.vue";
-import {reactive, ref} from "vue"
+import {reactive, ref, watch} from "vue"
 import router from "@/router/index.js";
 import store from "@/store/index.js";
 import {FormInstance, FormRules} from "element-plus";
@@ -32,6 +32,7 @@ const columns = ref([
     key: "actions",
   },
 ]);
+
 
 const attemptKraValidation = (invoice_number, invoice_id)=>{
   submitLoading.value = true
@@ -65,6 +66,22 @@ const form = ref({
   invoice_number:1020
 })
 const postManually = ref(false)
+
+const invoiceNumberFilter = ref('')
+const backendUrl = ref('invoice-list')
+
+watch(invoiceNumberFilter, (newFilterValue) => {
+  if (newFilterValue) {
+    // Ensure no slash before '?'
+    backendUrl.value = `invoice-list?invoice_number=${newFilterValue}`;
+    store.state.refreshData = true;
+  } else {
+    backendUrl.value = 'invoice-list';
+    store.state.refreshData = false;
+  }
+});
+
+
 const showValidatedInvoice = ref(false)
 const validatedInvoicePdfUrl = ref('')
 const selected_invoice_id = ref(null)
@@ -91,6 +108,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           showValidatedInvoice.value = true;
           validatedInvoicePdfUrl.value = response.data?.download_url;
           submitLoading.value = false
+      }).catch((err)=>{
+        submitLoading.value = false
       })
     } else {
       submitLoading.value = false;
@@ -153,10 +172,14 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
     <BaseDataTable
         :columns="columns"
-        fetch-url="invoice-list"
+        :show-other-items="true"
+        :fetch-url="backendUrl"
         v-if="!postManually"
         title="Invoices">
 
+      <template #otherItems>
+        <el-input placeholder="search by invoice number" v-model="invoiceNumberFilter"/>
+      </template>
 
       <template v-slot:bodyCell="slotProps">
 
@@ -195,7 +218,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             <template #icon>
               <Open class="h-fit"/>
             </template>
-            <template #default>View Invoice</template>
+            <template #default>View Validated Invoice</template>
           </ElButton>
         </template>
       </template>

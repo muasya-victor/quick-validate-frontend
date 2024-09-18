@@ -64,7 +64,7 @@ onMounted(()=>{
 
         <span class="text-gray-300 text-xs mt-5">
           System By
-          <a href="https://www.fastduka.co.ke/" target="_blank">FastDuka</a>
+          <a href="mailto:vicmwe184@gmail.com" target="_blank">Muasya</a>
         </span>
 
       </div>
