@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ArrowRight, Delete, EditPen} from "@element-plus/icons-vue";
+import {ArrowRight, Delete, Download, EditPen, Open} from "@element-plus/icons-vue";
 import BaseDataTable from "@/components/base/BaseDataTable.vue";
 import ValidatedInvoice from "@/views/invoices/ValidatedInvoice.vue";
 import {reactive, ref} from "vue"
@@ -33,10 +33,17 @@ const columns = ref([
   },
 ]);
 
-const attemptKraValidation = (invoice_number)=>{
+const attemptKraValidation = (invoice_number, invoice_id)=>{
   submitLoading.value = true
+  selected_invoice_id.value = invoice_id
+  console.log('invoice id ',invoice_id)
+
   store.dispatch('postData', {data: {"invoice_number": invoice_number}, url:"invoice"})
       .then((response)=>{
+        if (selected_invoice_id.value != null && response.data?.download_url){
+          store.dispatch('patchData', {url: 'invoice-list', id: selected_invoice_id.value,
+            data:{is_validated:true, validated_invoice_url: response.data?.download_url}})
+        }
         showValidatedInvoice.value = true;
         validatedInvoicePdfUrl.value = response.data?.download_url;
         submitLoading.value = false
@@ -48,6 +55,11 @@ const attemptKraValidation = (invoice_number)=>{
       })
   ;
 }
+const viewSelectedInvoice = (download_url)=>{
+  console.log(download_url, 'url')
+  showValidatedInvoice.value = true;
+  validatedInvoicePdfUrl.value = download_url;
+}
 
 const form = ref({
   invoice_number:1020
@@ -55,6 +67,7 @@ const form = ref({
 const postManually = ref(false)
 const showValidatedInvoice = ref(false)
 const validatedInvoicePdfUrl = ref('')
+const selected_invoice_id = ref(null)
 const submitLoading = ref(false);
 
 const handleDialogClose = ()=> {
@@ -71,10 +84,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       store.dispatch("postData", {url: 'invoice',
         data:form.value}).then((response) => {
-        showValidatedInvoice.value = true;
+          if (selected_invoice_id.value != null){
+            store.dispatch('patchData', {url: 'invoice', id: selected_invoice_id.value,
+              data:{is_validated:true, validated_invoice_url: response.download_url}})
+          }
+          showValidatedInvoice.value = true;
           validatedInvoicePdfUrl.value = response.data?.download_url;
-        submitLoading.value = false
-
+          submitLoading.value = false
       })
     } else {
       submitLoading.value = false;
@@ -101,7 +117,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     </div>
 
 
-    <div class="py-4">
+    <div class="py-4 hidden">
       <el-switch
           active-text="Use Invoice Number To Validate"
           inactive-text="Validate From List"
@@ -162,16 +178,24 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         </template>
 
         <template v-if="slotProps.column.key === 'actions'">
-          <!--                      {{ slotProps.text }}-->
-
           <ElButton type="primary"
-                    @click="attemptKraValidation(slotProps.text?.invoice_number)"
+                    v-if="slotProps.text?.is_validated === false"
+                    @click="attemptKraValidation(slotProps.text?.invoice_number, slotProps?.text?.id)"
                     size="default"
                     plain>
             <template #icon>
               <ArrowRight class="h-fit"/>
             </template>
             <template #default>Validate</template>
+          </ElButton>
+          <ElButton v-if="slotProps.text?.is_validated === true"
+                    @click="viewSelectedInvoice(slotProps.text?.validated_invoice_url)"
+                    size="default"
+                    plain>
+            <template #icon>
+              <Open class="h-fit"/>
+            </template>
+            <template #default>View Invoice</template>
           </ElButton>
         </template>
       </template>

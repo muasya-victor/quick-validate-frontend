@@ -132,6 +132,27 @@ export default {
     queryData(url) {
       this.loading = true;
 
+      if (this.$route?.name === 'invoice-list'){
+        store
+            .dispatch("fetchList", {url:'invoices-list'})
+            .then((resp) => {
+              store
+                  .dispatch("fetchList", {url})
+                  .then((resp) => {
+                    this.dataSource = resp.data;
+                    this.loading = false;
+                  })
+                  .catch(() => {
+                    this.loading = false;
+                  });
+            })
+            .catch(() => {
+              this.loading = false;
+            });
+
+        return
+      }
+
       store
           .dispatch("fetchList", {url})
           .then((resp) => {
@@ -151,7 +172,8 @@ export default {
     },
     trailingReload() {
       this.$emit('trailingReload')
-    }
+    },
+    getInvoice(){}
   },
   watch: {
     fetchUrl: function (newVal, oldVal) {

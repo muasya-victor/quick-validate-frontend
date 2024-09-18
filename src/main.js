@@ -48,12 +48,25 @@ api.interceptors.response.use(undefined, function (err) {
             }
 
             const kraInvoiceExisistsError = response.data?.error;
-            if (kraInvoiceExisistsError) {
+
+            if (kraInvoiceExisistsError?.resultMsg) {
+                console.log(kraInvoiceExisistsError)
                 ElNotification({
                     title: 'Error',
                     type: "error",
                     position: "top-right",
-                    message: `KRA - ${kraInvoiceExisistsError.resultMsg}` || 'An error occurred',
+                    message: `KRA - ${kraInvoiceExisistsError?.resultMsg}` || 'An error occurred',
+                });
+                return;
+            }
+
+            if (kraInvoiceExisistsError) {
+                console.log(kraInvoiceExisistsError)
+                ElNotification({
+                    title: 'Error',
+                    type: "error",
+                    position: "top-right",
+                    message: `QuickBooks - ${kraInvoiceExisistsError}` || 'An error occurred',
                 });
                 return;
             }
