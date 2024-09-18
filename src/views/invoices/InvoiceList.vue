@@ -34,7 +34,19 @@ const columns = ref([
 ]);
 
 const attemptKraValidation = (invoice_number)=>{
-  store.dispatch('postData', {data: {"invoice_number": invoice_number}, url:"invoice"});
+  submitLoading.value = true
+  store.dispatch('postData', {data: {"invoice_number": invoice_number}, url:"invoice"})
+      .then((response)=>{
+        showValidatedInvoice.value = true;
+        validatedInvoicePdfUrl.value = response.data?.download_url;
+        submitLoading.value = false
+
+      })
+      .catch((err)=>{
+        showValidatedInvoice.value = false;
+        submitLoading.value = false
+      })
+  ;
 }
 
 const form = ref({
