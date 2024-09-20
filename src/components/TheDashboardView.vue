@@ -26,26 +26,9 @@ const routerViewStyle = computed(() => {
 });
 
 const authoriseQuickBooks = async () => {
-  const isBackendReady = async () => {
-    try {
-      // Fetch the backend status (you need to replace this URL)
-      const response = await fetch('your-backend-status-url');
-      return response.ok; // Check if the response is successful
-    } catch (error) {
-      console.error('Error checking backend status:', error);
-      return false;
-    }
-  };
-
-  // Wait until the backend is ready
-  while (!(await isBackendReady())) {
-    console.log('Waiting for backend to be ready...');
-    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds before checking again
-  }
-
-  // Once the backend is ready, fetch the list and navigate
-  const res = await store.dispatch('fetchList', { url: 'get-url' });
-  router.push({ name: 'authorise-quickbooks' });
+  store.dispatch('fetchList', {url:'get-url'}).then(res=>{
+    router.push({name:'authorise-quickbooks'})
+  })
 };
 
 const logout = ()=>{
