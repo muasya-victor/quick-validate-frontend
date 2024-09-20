@@ -11,6 +11,7 @@ export default createStore({
     sideNavCollapse:false,
     ShowMobileMenu:false,
     refreshData:false,
+    quickBooksAccessToken:null,
   },
   actions:{
       /**

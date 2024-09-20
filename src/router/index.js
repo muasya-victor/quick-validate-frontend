@@ -17,6 +17,7 @@ import KraSetup from "@/views/kra/KraSetup.vue";
 import InvoiceList from "@/views/invoices/InvoiceList.vue";
 import ValidatedInvoice from "@/views/invoices/ValidatedInvoice.vue";
 import ManualInvoiceValidation from "@/views/invoices/ManualInvoiceValidation.vue";
+import AuthoriseQuickbooks from "@/views/quickbooks/AuthoriseQuickbooks.vue";
 
 const routes = [
   {
@@ -66,23 +67,24 @@ const routes = [
             }
           ]
         },
-      {
-        name: 'validated-invoice',
-        path: 'validated-invoice',
-        component: ValidatedInvoice,
-        requiresAuth: true,
-        meta: {
-          slug: 'Invoice List',
+        {
+          name: 'validated-invoice',
+          path: 'validated-invoice',
+          component: ValidatedInvoice,
+          requiresAuth: true,
+          meta: {
+            slug: 'Invoice List',
+          },
         },
-      },  {
-        name: 'manual-validation',
-        path: 'manual-validation',
-        component: ManualInvoiceValidation,
-        requiresAuth: true,
-        meta: {
-          slug: 'Manual Validation',
+        {
+          name: 'manual-validation',
+          path: 'manual-validation',
+          component: ManualInvoiceValidation,
+          requiresAuth: true,
+          meta: {
+            slug: 'Manual Validation',
+          },
         },
-      },
         {
           name: 'settings',
           path: 'settings',
@@ -137,6 +139,15 @@ const routes = [
           requiresAuth: true,
           meta: {
             slug: 'Profile',
+          },
+        },
+        {
+          name: 'authorise-quickbooks',
+          path: 'authorise-quickbooks',
+          component: AuthoriseQuickbooks,
+          requiresAuth: true,
+          meta: {
+            slug: 'Authorise Quickbooks',
           },
         },
       ]

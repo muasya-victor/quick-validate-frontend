@@ -25,6 +25,29 @@ const routerViewStyle = computed(() => {
   };
 });
 
+const authoriseQuickBooks = async () => {
+  const isBackendReady = async () => {
+    try {
+      // Fetch the backend status (you need to replace this URL)
+      const response = await fetch('your-backend-status-url');
+      return response.ok; // Check if the response is successful
+    } catch (error) {
+      console.error('Error checking backend status:', error);
+      return false;
+    }
+  };
+
+  // Wait until the backend is ready
+  while (!(await isBackendReady())) {
+    console.log('Waiting for backend to be ready...');
+    await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 2 seconds before checking again
+  }
+
+  // Once the backend is ready, fetch the list and navigate
+  const res = await store.dispatch('fetchList', { url: 'get-url' });
+  router.push({ name: 'authorise-quickbooks' });
+};
+
 const logout = ()=>{
   deleteLocalStorageInformation()
   router.replace({name:'login'})
@@ -105,6 +128,17 @@ watch(route, updateBreadcrumbs, { immediate: true });
                   {{authData?.user?.phone_local_number}}
                 </p>
               </div>
+              <el-button type="primary"
+                         size="large"
+                  @click="authoriseQuickBooks"
+                  class="w-full">
+                Authorise Quickbooks
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                </svg>
+              </el-button>
+
               <button
                   @click="logout"
                   class="w-full p-3 h-10 rounded-md flex items-center justify-center gap-2 hover:text-lg bg-red-500 text-white">
