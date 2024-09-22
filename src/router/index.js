@@ -46,6 +46,13 @@ const routes = [
     meta: {
       slug: 'Quick Books Auth',
     },
+  },{
+    name:'quickbooks-auth-error',
+    path: '/quickbooks-auth-error',
+    component: QuickBooksAuth,
+    meta: {
+      slug: 'Quick Books Auth Error',
+    },
   },
   {
     name:'auth',
