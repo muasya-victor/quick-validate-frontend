@@ -49,7 +49,7 @@
       >
         <!--                @click="submitForm(loginFormRef)"-->
 
-        Sign In
+        Sign In to Quick Validate
       </el-button>
     </div>
     <div class="text-sm hidden">

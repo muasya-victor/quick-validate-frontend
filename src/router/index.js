@@ -18,6 +18,7 @@ import InvoiceList from "@/views/invoices/InvoiceList.vue";
 import ValidatedInvoice from "@/views/invoices/ValidatedInvoice.vue";
 import ManualInvoiceValidation from "@/views/invoices/ManualInvoiceValidation.vue";
 import AuthoriseQuickbooks from "@/views/quickbooks/AuthoriseQuickbooks.vue";
+import QuickBooksAuth from "@/views/auth/ui/QuickBooksAuth.vue";
 
 const routes = [
   {
@@ -32,10 +33,26 @@ const routes = [
   },
   {
     name:'login',
-    path: '/',
+    path: '/login',
     component: LoginView,
     meta: {
       slug: 'Login',
+    },
+  },
+  {
+    name:'auth',
+    path: '/',
+    component: QuickBooksAuth,
+    meta: {
+      slug: 'Quick Books Auth',
+    },
+  },
+  {
+    name:'auth',
+    path: '/',
+    component: QuickBooksAuth,
+    meta: {
+      slug: 'Quick Books Auth',
     },
   },
   {
