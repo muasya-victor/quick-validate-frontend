@@ -12,6 +12,11 @@ const ruleForm = ref<FormInstance>();
 const rules = reactive<FormRules>({});
 const columns = ref([
   {
+    title: "",
+    dataIndex: "",
+    key: "download_action",
+  },
+  {
     title: "Invoice Number",
     dataIndex: "invoice_number",
     key: "invoice_number",
@@ -182,6 +187,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       </template>
 
       <template v-slot:bodyCell="slotProps">
+
+        <template v-if="slotProps.column.key === 'download_action'">
+          <el-checkbox v-if="slotProps.text.is_validated === true" size="large" />
+          </template>
 
         <template v-if="slotProps.column.key === 'created_date'">
           {{formatDate(slotProps.text)}}

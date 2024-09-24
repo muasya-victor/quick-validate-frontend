@@ -19,6 +19,7 @@ import ValidatedInvoice from "@/views/invoices/ValidatedInvoice.vue";
 import ManualInvoiceValidation from "@/views/invoices/ManualInvoiceValidation.vue";
 import AuthoriseQuickbooks from "@/views/quickbooks/AuthoriseQuickbooks.vue";
 import QuickBooksAuth from "@/views/auth/ui/QuickBooksAuth.vue";
+import ComingSoon from "@/components/ComingSoon.vue";
 
 const routes = [
   {
@@ -90,6 +91,24 @@ const routes = [
               },
             }
           ]
+        },
+        {
+          name: 'customer-list',
+          path: 'customer-list',
+          component: ComingSoon,
+          requiresAuth: true,
+          meta: {
+            slug: 'Coming Soon',
+          },
+        },
+        {
+          name: 'credit-note',
+          path: 'credit-note',
+          component: ComingSoon,
+          requiresAuth: true,
+          meta: {
+            slug: 'Coming Soon',
+          },
         },
         {
           name: 'validated-invoice',
