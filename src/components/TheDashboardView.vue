@@ -35,7 +35,7 @@ const logout = ()=>{
   deleteLocalStorageInformation()
   router.replace({name:'auth'})
 }
-const authData = JSON.parse(localStorage.getItem("authData"));
+const authData = JSON.parse(localStorage.getItem("authData")) || {}
 
 const route = useRoute();
 const breadcrumbs = ref([]);
@@ -88,15 +88,13 @@ watch(route, updateBreadcrumbs, { immediate: true });
             <!--            <div size="default" class="cursor-pointer font-extrabold flex gap-2 h-12 px-2  w-fit rounded text-white items-center justify-center"  >-->
             <!--              <span>{{authData?.user?.first_name[0]}}</span> <span>{{authData?.user?.last_name[0]}}</span>-->
             <!--            </div>-->
-            <div class=" font-bold  rounded-md border border-gray-200 shadow-sm hover:shadow-lg
-              h-[30px] w-[30px] md:w-fit md:h-fit p-0 md:p-2 flex items-center
-              justify-center cursor-pointer">
-              <div class="flex p-0 items-center w-full h-fit
-                 text-center justify-center">
-                {{authData?.user?.first_name[0]}} {{authData?.user?.last_name[0]}}
+            <div class="font-bold rounded-md border border-gray-200 shadow-sm hover:shadow-lg h-[30px] w-[30px] md:w-fit md:h-fit p-0 md:p-2 flex items-center justify-center cursor-pointer">
+              <div class="flex p-0 items-center w-full h-fit text-center justify-center">
+                <span v-if="authData && authData.user && authData.user.first_name">{{authData.user.first_name[0]}} {{authData.user.last_name[0]}}</span>
+                <span v-else>User</span> <!-- Default placeholder if data is missing -->
               </div>
-
             </div>
+
           </template>
 
           <template #default>
