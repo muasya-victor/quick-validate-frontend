@@ -11,7 +11,7 @@
 <template>
   <AuthWrapper>
     <div class="w-full h-full flex flex-col justify-center ">
-      <el-button type="primary" size="large" @click="routeToBackend">Authorise Quick Books</el-button>
+      <el-button type="primary" size="large" @click="routeToBackend">Connect QuickBooks</el-button>
     </div>
   </AuthWrapper>
 
