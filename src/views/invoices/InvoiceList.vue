@@ -7,6 +7,7 @@ import router from "@/router/index.js";
 import store from "@/store/index.js";
 import {FormInstance, FormRules} from "element-plus";
 import {formatDate} from "@/utility/functions"
+import BaseLoader from "@/components/base/BaseLoader.vue";
 
 const ruleForm = ref<FormInstance>();
 const rules = reactive<FormRules>({});
@@ -40,7 +41,7 @@ const columns = ref([
 
 
 const attemptKraValidation = (invoice_number, invoice_id)=>{
-  submitLoading.value = true
+  store.state.submitLoading = true
   selected_invoice_id.value = invoice_id
   console.log('invoice id ',invoice_id)
 
@@ -52,12 +53,12 @@ const attemptKraValidation = (invoice_number, invoice_id)=>{
         }
         showValidatedInvoice.value = true;
         validatedInvoicePdfUrl.value = response.data?.download_url;
-        submitLoading.value = false
+        store.state.submitLoading = false
 
       })
       .catch((err)=>{
         showValidatedInvoice.value = false;
-        submitLoading.value = false
+        store.state.submitLoading = false
       })
   ;
 }
@@ -97,7 +98,7 @@ const handleDialogClose = ()=> {
 }
 
 const submitForm = async (formEl: FormInstance | undefined) => {
-  submitLoading.value = true;
+  store.state.submitLoading = true;
   console.log(form.value, 'form')
   validatedInvoicePdfUrl.value = '';
 
@@ -112,15 +113,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           }
           showValidatedInvoice.value = true;
           validatedInvoicePdfUrl.value = response.data?.download_url;
-          submitLoading.value = false
+        store.state.submitLoading = false
       }).catch((err)=>{
-        submitLoading.value = false
+        store.state.submitLoading = false
       })
     } else {
-      submitLoading.value = false;
+      store.state.submitLoading = false;
       showValidatedInvoice.value = true;
     }
-    submitLoading.value = false;
+    store.state.submitLoading = false;
   });
 };
 
@@ -175,11 +176,15 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
     </div>
 
+    <div v-if="store.state.submitLoading" class="h-full w-full flex justify-center items-center text-blue-500">
+      <BaseLoader/>
+    </div>
+
     <BaseDataTable
         :columns="columns"
         :show-other-items="true"
         :fetch-url="backendUrl"
-        v-if="!postManually"
+        v-if="!store.state.submitLoading"
         title="Invoices">
 
       <template #otherItems>

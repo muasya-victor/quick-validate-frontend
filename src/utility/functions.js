@@ -1,5 +1,6 @@
 import {ElNotification} from "element-plus";
 import Swal from 'sweetalert2';
+import store from "@/store/index.js";
 
 export function showSuccess (text)
 {
@@ -22,6 +23,8 @@ export function raiseError (text)
 
 export function raiseServerError(err) {
     console.log(err.response.status, 'err resp');
+
+    store.state.submitLoading = false
 
     if (err.response.status ===400){
         return

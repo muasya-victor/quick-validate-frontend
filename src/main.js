@@ -27,6 +27,7 @@ api.interceptors.response.use(undefined, function (err) {
         const response = err.response;
 
         if (response.status === 400) {
+            store.state.submitLoading = false
             // Check if it's a QuickBooks specific error
             const quickbooksErrorTitle = response.data?.['Quickbooks Response error'];
             const fault = quickbooksErrorTitle?.fault;
