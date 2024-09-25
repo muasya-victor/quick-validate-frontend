@@ -4,9 +4,8 @@ import ExternalAuth from "@/views/auth/forms/ExternalAuth.vue"
 import { onMounted,ref, watch } from "vue"
 
 const loginImages = ref([
-  'invoice.png',
-  'receipt_and_money.png',
-  'too_much.png',
+  'Quick.png',
+  'etims-Machine-Receipt.png',
   ])
 
 const imageIndex = ref(0)
