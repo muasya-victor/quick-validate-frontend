@@ -72,7 +72,7 @@ const attemptKraValidation = (invoice_number, invoice_id)=>{
   selected_invoice_id.value = invoice_id
 
   store.dispatch('postData', {data: {
-      "customer_kra_pin": customerObject?.pin,
+      "customer_kra_pin": customerObject.value?.pin,
       "invoice_number": invoice_number,
     },
     url:"invoice"})
