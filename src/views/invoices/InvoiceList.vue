@@ -39,13 +39,43 @@ const columns = ref([
   },
 ]);
 
+const loadingCustomers = ref(false)
+const customers = ref([])
+
+const getCustomers = ()=>{
+  loadingCustomers.value = true
+  customers.value = []
+  store.dispatch('fetchList', {url:'customers-list'})
+      .then((resp)=>{
+        resp.data.map((customer) => {
+          customers.value.push({
+            label: `${customer.fully_qualified_name} - ${customer.pin}`,
+            value: customer,
+          })
+        })
+        loadingCustomers.value = false
+        // return customers;
+      })
+      .catch((err)=>{
+        loadingCustomers.value = false
+      })
+}
+
+const selectCustomer = (value)=>{
+  customerObject.value = value
+}
+
+const customerObject = ref(null)
 
 const attemptKraValidation = (invoice_number, invoice_id)=>{
   store.state.submitLoading = true
   selected_invoice_id.value = invoice_id
-  console.log('invoice id ',invoice_id)
 
-  store.dispatch('postData', {data: {"invoice_number": invoice_number}, url:"invoice"})
+  store.dispatch('postData', {data: {
+      "customer_kra_pin": customerObject?.pin,
+      "invoice_number": invoice_number,
+    },
+    url:"invoice"})
       .then((response)=>{
         if (selected_invoice_id.value != null && response.data?.download_url){
           store.dispatch('patchData', {url: 'invoice-list', id: selected_invoice_id.value,
@@ -62,6 +92,7 @@ const attemptKraValidation = (invoice_number, invoice_id)=>{
       })
   ;
 }
+
 const viewSelectedInvoice = (download_url)=>{
   console.log(download_url, 'url')
   showValidatedInvoice.value = true;
@@ -97,36 +128,6 @@ const handleDialogClose = ()=> {
   showValidatedInvoice.value = false
 }
 
-const submitForm = async (formEl: FormInstance | undefined) => {
-  store.state.submitLoading = true;
-  console.log(form.value, 'form')
-  validatedInvoicePdfUrl.value = '';
-
-  if (!formEl) return;
-  await formEl.validate((valid, fields) => {
-    if (valid) {
-      store.dispatch("postData", {url: 'invoice',
-        data:form.value}).then((response) => {
-          if (selected_invoice_id.value != null){
-            store.dispatch('patchData', {url: 'invoice', id: selected_invoice_id.value,
-              data:{is_validated:true, validated_invoice_url: response.download_url}})
-          }
-          showValidatedInvoice.value = true;
-          validatedInvoicePdfUrl.value = response.data?.download_url;
-        store.state.submitLoading = false
-      }).catch((err)=>{
-        store.state.submitLoading = false
-      })
-    } else {
-      store.state.submitLoading = false;
-      showValidatedInvoice.value = true;
-    }
-    store.state.submitLoading = false;
-  });
-};
-
-
-
 </script>
 
 <template>
@@ -139,41 +140,6 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       <ValidatedInvoice
           @close-dialog="handleDialogClose"
           :download-url="validatedInvoicePdfUrl"/>
-    </div>
-
-
-    <div class="py-4 hidden">
-      <el-switch
-          active-text="Use Invoice Number To Validate"
-          inactive-text="Validate From List"
-          v-model="postManually"/>
-
-      <div v-if="postManually" class="py-4">
-        <el-form
-                 label-position="top"
-                 :model="form"
-                 ref="ruleForm"
-                 label-width="100px">
-          <el-form-item label="Invoice Number"
-                        prop="invoice_number"
-                        class="w-full md:w-[200px]">
-            <el-input-number
-                size="large"
-                style="width: 100%"
-                v-model="form.invoice_number"/>
-          </el-form-item>
-
-          <el-button
-              class="w-full md:w-[200px]"
-              size="large"
-              :loading="submitLoading"
-              @click="submitForm(ruleForm)"
-              type="primary"
-          >Validate Invoice
-          </el-button>
-        </el-form>
-      </div>
-
     </div>
 
     <div v-if="store.state.submitLoading" class="h-full w-full flex justify-center items-center text-blue-500">
@@ -189,6 +155,27 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
       <template #otherItems>
         <el-input placeholder="search by invoice number" v-model="invoiceNumberFilter"/>
+
+        <el-select
+            clearable
+            size="large"
+            @focus="getCustomers"
+            @change="selectCustomer"
+            placeholder="Select Customer To Validate"
+            :loading="loadingCustomers"
+            style="width: 240px"
+        >
+          <el-option
+              v-for="item in customers"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+          />
+        </el-select>
+
+
+        <el-tag v-if="customerObject !== null" type="success" class="h-full" size="large">Customer :
+          {{customerObject?.fully_qualified_name}} - {{customerObject?.pin}}</el-tag>
       </template>
 
       <template v-slot:bodyCell="slotProps">
@@ -216,7 +203,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
         <template v-if="slotProps.column.key === 'actions'">
           <ElButton type="primary"
-                    v-if="slotProps.text?.is_validated === false"
+                    v-if="slotProps.text?.is_validated === false && customerObject !== null"
                     @click="attemptKraValidation(slotProps.text?.invoice_number, slotProps?.text?.id)"
                     size="default"
                     plain>
