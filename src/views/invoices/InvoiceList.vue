@@ -80,6 +80,9 @@ const attemptKraValidation = (invoice_number, invoice_id)=>{
         if (selected_invoice_id.value != null && response.data?.download_url){
           store.dispatch('patchData', {url: 'invoice-list', id: selected_invoice_id.value,
             data:{is_validated:true, validated_invoice_url: response.data?.download_url}})
+              .then((resp)=>{{
+                customerObject.value = null
+              }})
         }
         showValidatedInvoice.value = true;
         validatedInvoicePdfUrl.value = response.data?.download_url;
