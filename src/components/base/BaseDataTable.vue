@@ -152,6 +152,26 @@ export default {
 
         return
       }
+      if (this.$route?.name === 'customer-list'){
+        store
+            .dispatch("fetchList", {url:'customers'})
+            .then((resp) => {
+              store
+                  .dispatch("fetchList", {url})
+                  .then((resp) => {
+                    this.dataSource = resp.data;
+                    this.loading = false;
+                  })
+                  .catch(() => {
+                    this.loading = false;
+                  });
+            })
+            .catch(() => {
+              this.loading = false;
+            });
+
+        return
+      }
 
       store
           .dispatch("fetchList", {url})
