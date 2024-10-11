@@ -45,15 +45,7 @@
               size="large"
           />
         </el-form-item>
-        <el-form-item label="Kra Pin" prop="pin"
-                      :rules="[
-            {
-              required: true,
-              message: 'Please input kra pin',
-              trigger: 'blur',
-            }
-         ]"
-        >
+        <el-form-item label="Kra Pin" prop="pin">
           <el-input
               v-model="form.pin"
               :prefix-icon="UserIcon"
