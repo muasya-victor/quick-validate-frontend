@@ -65,6 +65,8 @@ const selectCustomer = (value)=>{
   customerObject.value = value
 }
 
+const validateWithoutCustomer = ref(false)
+
 const customerObject = ref(null)
 
 const attemptKraValidation = (invoice_number, invoice_id)=>{
@@ -72,7 +74,7 @@ const attemptKraValidation = (invoice_number, invoice_id)=>{
   selected_invoice_id.value = invoice_id
 
   store.dispatch('postData', {data: {
-      "customer_kra_pin": customerObject.value?.pin,
+      "customer_kra_pin": validateWithoutCustomer.value ? null : customerObject.value?.pin ,
       "invoice_number": invoice_number,
     },
     url:"invoice"})
@@ -157,16 +159,25 @@ const handleDialogClose = ()=> {
         title="Invoices">
 
       <template #otherItems>
-        <el-input placeholder="search by invoice number" v-model="invoiceNumberFilter"/>
+        <el-input style="width: 250px" placeholder="search by invoice number" v-model="invoiceNumberFilter"/>
+
+        <el-switch
+            v-model="validateWithoutCustomer"
+            size="large"
+            active-text="Open Validation"
+            inactive-text="Customer Validation"
+        />
 
         <el-select
+            v-if="!validateWithoutCustomer"
             clearable
+            filterable
             size="large"
             @focus="getCustomers"
             @change="selectCustomer"
             placeholder="Select Customer To Validate"
             :loading="loadingCustomers"
-            style="width: 240px"
+            style="width: 300px"
         >
           <el-option
               v-for="item in customers"
@@ -206,7 +217,7 @@ const handleDialogClose = ()=> {
 
         <template v-if="slotProps.column.key === 'actions'">
           <ElButton type="primary"
-                    v-if="slotProps.text?.is_validated === false && customerObject !== null"
+                    v-if="slotProps.text?.is_validated === false && (customerObject !== null || validateWithoutCustomer)"
                     @click="attemptKraValidation(slotProps.text?.invoice_number, slotProps?.text?.id)"
                     size="default"
                     plain>
