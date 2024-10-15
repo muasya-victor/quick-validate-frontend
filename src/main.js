@@ -94,13 +94,7 @@ api.interceptors.response.use(undefined, function (err) {
                     message: 'QuickBooks Authentication Failed. Token Expired.',
                 });
             } else {
-                // Generic session expired error
-                ElNotification({
-                    title: 'Error',
-                    type: "error",
-                    position: "top-right",
-                    message: 'Session Expired',
-                });
+                return;
             }
             deleteLocalStorageInformation();
             router.push({ name: "auth" });
