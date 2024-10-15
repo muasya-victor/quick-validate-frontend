@@ -78,10 +78,10 @@ const backendUrl = ref('customers-list')
 watch(invoiceNumberFilter, (newFilterValue) => {
   if (newFilterValue) {
     // Ensure no slash before '?'
-    backendUrl.value = `invoice-list?invoice_number=${newFilterValue}`;
+    backendUrl.value = `customers-list?fully_qualified_name=${newFilterValue}`;
     store.state.refreshData = true;
   } else {
-    backendUrl.value = 'invoice-list';
+    backendUrl.value = 'customers-list';
     store.state.refreshData = false;
   }
 });
