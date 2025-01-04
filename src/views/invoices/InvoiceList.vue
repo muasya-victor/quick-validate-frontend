@@ -108,15 +108,15 @@ const form = ref({
 const postManually = ref(false)
 
 const invoiceNumberFilter = ref('')
-const backendUrl = ref('invoice-list')
+const backendUrl = ref('get/user/invoices')
 
 watch(invoiceNumberFilter, (newFilterValue) => {
   if (newFilterValue) {
     // Ensure no slash before '?'
-    backendUrl.value = `invoice-list?invoice_number=${newFilterValue}`;
+    backendUrl.value = `get/user/invoices?invoice_number=${newFilterValue}`;
     store.state.refreshData = true;
   } else {
-    backendUrl.value = 'invoice-list';
+    backendUrl.value = 'get/user/invoices';
     store.state.refreshData = false;
   }
 });

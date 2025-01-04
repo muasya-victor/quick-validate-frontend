@@ -134,7 +134,7 @@ export default {
 
       if (this.$route?.name === 'invoice-list'){
         store
-            .dispatch("fetchList", {url:'invoices-list'})
+            .dispatch("fetchList", {url:'query/quickbooks/invoices'})
             .then((resp) => {
               store
                   .dispatch("fetchList", {url})
