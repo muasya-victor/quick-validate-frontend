@@ -23,14 +23,19 @@ const columns = ref([
     key: "invoice_number",
   },
   {
-    title: "Date Created",
-    dataIndex: "created_date",
-    key: "created_date",
+    title: "Total Amount",
+    dataIndex: "total_taxable_amount",
+    key: "invoice_number",
   },
   {
-    title: "Date Updated",
-    dataIndex: "updated_date",
-    key: "updated_date",
+    title: "Customer Name",
+    dataIndex: "customer",
+    key: "customer",
+  },
+  {
+    title: "Customer Pin",
+    dataIndex: "customer",
+    key: "customer",
   },
   {
     title: "Actions",
@@ -67,15 +72,15 @@ const selectCustomer = (value)=>{
 
 const customerObject = ref(null)
 
-const attemptKraValidation = (invoice_number, invoice_id)=>{
+const attemptKraValidation = (invoice_number, invoice_id, cfm_date)=>{
   store.state.submitLoading = true
   selected_invoice_id.value = invoice_id
 
   store.dispatch('postData', {data: {
-      "customer_kra_pin": customerObject.value?.pin,
+      "cfm_date": cfm_date,
       "invoice_number": invoice_number,
     },
-    url:"invoice"})
+    url:"validate/invoices"})
       .then((response)=>{
         if (selected_invoice_id.value != null && response.data?.download_url){
           store.dispatch('patchData', {url: 'invoice-list', id: selected_invoice_id.value,
@@ -159,7 +164,7 @@ const handleDialogClose = ()=> {
       <template #otherItems>
         <el-input placeholder="search by invoice number" v-model="invoiceNumberFilter"/>
 
-        <el-select
+        <!-- <el-select
             clearable
             size="large"
             @focus="getCustomers"
@@ -178,20 +183,20 @@ const handleDialogClose = ()=> {
 
 
         <el-tag v-if="customerObject !== null" type="success" class="h-full" size="large">Customer :
-          {{customerObject?.fully_qualified_name}} - {{customerObject?.pin}}</el-tag>
+          {{customerObject?.fully_qualified_name}} - {{customerObject?.pin}}</el-tag> -->
       </template>
 
       <template v-slot:bodyCell="slotProps">
 
         <template v-if="slotProps.column.key === 'download_action'">
           <el-checkbox v-if="slotProps.text.is_validated === true" size="large" />
-          </template>
-
-        <template v-if="slotProps.column.key === 'created_date'">
-          {{formatDate(slotProps.text)}}
         </template>
-        <template v-if="slotProps.column.key === 'updated_date'">
-          {{formatDate(slotProps.text)}}
+
+        <template v-if="slotProps.column.key === 'customer'">
+          {{slotProps?.text?.name}}
+        </template>
+        <template v-if="slotProps.column.key === 'customer_pin'">
+          {{formatDate(slotProps.text?.pin)}}
         </template>
 
         <template v-if="slotProps.column.key === 'is_active'">
@@ -206,8 +211,8 @@ const handleDialogClose = ()=> {
 
         <template v-if="slotProps.column.key === 'actions'">
           <ElButton type="primary"
-                    v-if="slotProps.text?.is_validated === false && customerObject !== null"
-                    @click="attemptKraValidation(slotProps.text?.invoice_number, slotProps?.text?.id)"
+                    v-if="slotProps.text?.is_validated === false && customer !== null"
+                    @click="attemptKraValidation(slotProps.text?.invoice_number, slotProps?.text?.id, slotProps?.text?.cfm_date)"
                     size="default"
                     plain>
             <template #icon>

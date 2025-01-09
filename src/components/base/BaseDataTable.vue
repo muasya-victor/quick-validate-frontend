@@ -132,51 +132,52 @@ export default {
     queryData(url) {
       this.loading = true;
 
-      if (this.$route?.name === 'invoice-list'){
-        store
-            .dispatch("fetchList", {url:'query/quickbooks/invoices'})
-            .then((resp) => {
-              store
-                  .dispatch("fetchList", {url})
-                  .then((resp) => {
-                    this.dataSource = resp.data;
-                    this.loading = false;
-                  })
-                  .catch(() => {
-                    this.loading = false;
-                  });
-            })
-            .catch(() => {
-              this.loading = false;
-            });
+      // if (this.$route?.name === 'invoice-list'){
+        // store
+        //     .dispatch("fetchList", {url:'query/quickbooks/invoices'})
+        //     .then((resp) => {
+        //       store
+        //           .dispatch("fetchList", {url})
+        //           .then((resp) => {
+        //             this.dataSource = resp.data;
+        //             this.loading = false;
+        //           })
+        //           .catch(() => {
+        //             this.loading = false;
+        //           });
+        //     })
+        //     .catch(() => {
+        //       this.loading = false;
+        //     });
 
-        return
-      }
-      if (this.$route?.name === 'customer-list'){
-        store
-            .dispatch("fetchList", {url:'customers'})
-            .then((resp) => {
-              store
-                  .dispatch("fetchList", {url})
-                  .then((resp) => {
-                    this.dataSource = resp.data;
-                    this.loading = false;
-                  })
-                  .catch(() => {
-                    this.loading = false;
-                  });
-            })
-            .catch(() => {
-              this.loading = false;
-            });
+      //   return
+      // }
+      // if (this.$route?.name === 'customer-list'){
+      //   store
+      //       .dispatch("fetchList", {url:'get/customers/list'})
+      //       .then((resp) => {
+      //         store
+      //             .dispatch("fetchList", {url})
+      //             .then((resp) => {
+      //               this.dataSource = resp.data;
+      //               this.loading = false;
+      //             })
+      //             .catch(() => {
+      //               this.loading = false;
+      //             });
+      //       })
+      //       .catch(() => {
+      //         this.loading = false;
+      //       });
 
-        return
-      }
+      //   return
+      // }
 
       store
           .dispatch("fetchList", {url})
           .then((resp) => {
-            this.dataSource = resp.data;
+            console.log("here")
+            this.dataSource = resp.data?.results;
             this.loading = false;
           })
           .catch(() => {

@@ -66,7 +66,7 @@
 
   </el-sub-menu>
 
-  <el-sub-menu
+  <!-- <el-sub-menu
       index="sub-2">
     <template #title>
       <el-icon>
@@ -102,7 +102,7 @@
         <template #title>KRA</template>
       </el-menu-item>
     </el-menu-item-group>
-  </el-sub-menu>
+  </el-sub-menu> -->
 
 </template>
 
