@@ -22,6 +22,7 @@ import QuickBooksAuth from "@/views/auth/ui/QuickBooksAuth.vue";
 import ComingSoon from "@/components/ComingSoon.vue";
 import CustomerList from "@/views/users/CustomerList.vue";
 import CreateEditCustomer from "@/views/users/CreateEditCustomer.vue";
+import CreditNoteList from "../views/credit-note/CreditNoteList.vue";
 
 const routes = [
   {
@@ -118,7 +119,7 @@ const routes = [
         {
           name: 'credit-note',
           path: 'credit-note',
-          component: ComingSoon,
+          component: CreditNoteList,
           requiresAuth: true,
           meta: {
             slug: 'Coming Soon',
