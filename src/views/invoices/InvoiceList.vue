@@ -34,8 +34,8 @@ const columns = ref([
   },
   {
     title: "Customer Pin",
-    dataIndex: "customer",
-    key: "customer",
+    dataIndex: "",
+    key: "pin",
   },
   {
     title: "Actions",
@@ -83,7 +83,7 @@ const attemptKraValidation = (invoice_number, invoice_id, cfm_date)=>{
     url:"validate/invoices"})
       .then((response)=>{
         if (selected_invoice_id.value != null && response.data?.download_url){
-          store.dispatch('patchData', {url: 'invoice-list', id: selected_invoice_id.value,
+          store.dispatch('patchData', {url: 'validate/invoices', id: selected_invoice_id.value,
             data:{is_validated:true, validated_invoice_url: response.data?.download_url}})
               .then((resp)=>{{
                 customerObject.value = null
@@ -195,8 +195,9 @@ const handleDialogClose = ()=> {
         <template v-if="slotProps.column.key === 'customer'">
           {{slotProps?.text?.name}}
         </template>
-        <template v-if="slotProps.column.key === 'customer_pin'">
-          {{formatDate(slotProps.text?.pin)}}
+        <template v-if="slotProps.column.key === 'pin'">
+          <el-tag v-if="slotProps.text?.customer?.pin === null">Null</el-tag>
+          {{slotProps.text?.pin}}
         </template>
 
         <template v-if="slotProps.column.key === 'is_active'">
