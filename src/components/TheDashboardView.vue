@@ -172,12 +172,12 @@ watch(route, updateBreadcrumbs, { immediate: true });
 
     </div>
 
-    <div class="py-2 border w-full text-center text-xs bg-gray-200 text-gray-500">
+    <!-- <div class="py-2 border w-full text-center text-xs bg-gray-200 text-gray-500">
       system by
       <a href="mailto:vicmwe184@gmail.com?subject=Interested%20in%20System%20Development&body=Hello%20Victor,%0D%0A%0D%0AI%20am%20interested%20in%20discussing%20the%20possibility%20of%20you%20developing%20a%20system%20for%20my%20business.%20Please%20let%20me%20know%20how%20we%20can%20move%20forward.%0D%0A%0D%0ABest%20regards,"
          target="_blank">Muasya</a>
 
-    </div>
+    </div> -->
   </div>
   <TheSideNav v-if="store.state.ShowMobileMenu"/>
 

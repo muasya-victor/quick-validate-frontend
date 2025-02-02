@@ -32,10 +32,15 @@ const columns = ref([
     key: "pin",
   },
   {
-    title: "Original Invoice Number",
-    dataIndex: "",
-    key: "inv",
+    title: "Amount",
+    dataIndex: "total_taxable_amount",
+    key: "total_taxable_amount",
   },
+  // {
+  //   title: "Original Invoice Number",
+  //   dataIndex: "",
+  //   key: "inv",
+  // },
   {
     title: "Actions",
     dataIndex: "",
@@ -57,7 +62,7 @@ const customerObject = ref(null)
 
 const attemptKraValidation = (credit_note_number, original_invoice_number = originalInvoiceNumber.value, pin)=>{
   store.state.submitLoading = true
-  if(original_invoice_number < 1){
+  if(!original_invoice_number ){
     alert('invoice number is required')
   }
   store.dispatch('postData', {data: {
@@ -72,6 +77,23 @@ const attemptKraValidation = (credit_note_number, original_invoice_number = orig
       })
   ;
 }
+
+// Get Invoices beloging to the user
+const userInvoices = ref([])
+const invoicesLoading = ref(false)
+const getInvoices = () => {
+  userInvoices.value = [] // set list to empty
+  invoicesLoading.value = true
+  store.dispatch('fetchList', {url: 'get/user/invoices'})
+    .then((res) => {
+      userInvoices.value = res.data.results
+      invoicesLoading.value = false
+    })
+    .catch((err)=>{
+      invoicesLoading.value = false
+    })
+}
+
 
 const viewSelectedInvoice = (download_url)=>{
   console.log(download_url, 'url')
@@ -156,6 +178,15 @@ const handleDialogClose = ()=> {
 
         <el-tag v-if="customerObject !== null" type="success" class="h-full" size="large">Customer :
           {{customerObject?.fully_qualified_name}} - {{customerObject?.pin}}</el-tag> -->
+
+          <el-select placeholder="select invoice number"
+            @focus="getInvoices"
+            class="min-w-[200px]"
+            :loading="invoicesLoading"
+            size="large"
+            v-model="originalInvoiceNumber">
+              <el-option v-for="invoice in userInvoices" :key="invoice" :value="invoice?.invoice_number"  />
+          </el-select>
       </template>
 
       <template v-slot:bodyCell="slotProps">
@@ -166,10 +197,6 @@ const handleDialogClose = ()=> {
 
         <template v-if="slotProps.column.key === 'customer'">
           {{slotProps?.text?.name}}
-        </template>
-
-        <template v-if="slotProps.column.key === 'inv'">
-          <el-input type="number" placeholder="original invoice number" v-model="originalInvoiceNumber"/>
         </template>
         
         <template v-if="slotProps.column.key === 'pin'">

@@ -14,11 +14,7 @@
       >
         <el-form-item label="Name" prop="name"
                       :rules="[
-            {
-              required: true,
-              message: 'Please input name',
-              trigger: 'blur',
-            }
+           
          ]"
         >
           <el-input
@@ -29,14 +25,6 @@
           />
         </el-form-item>
         <el-form-item label="Email" prop="email"
-                      :rules="[
-            {
-              required: true,
-              message: 'Please input email',
-              trigger: 'blur',
-              type: 'email',
-            }
-         ]"
         >
           <el-input
               v-model="form.email"
@@ -45,14 +33,23 @@
               size="large"
           />
         </el-form-item>
-        <el-form-item label="Kra Pin" prop="pin">
+        <el-form-item label="Kra Pin"
+          :rules='
+            [
+            { min: 11, max: 11, message: "KRA PIN must be exactly 11 characters", trigger: "blur" }
+          ]' 
+         prop="pin">
           <el-input
-              v-model="form.pin"
-              :prefix-icon="UserIcon"
-              placeholder="pin"
-              size="large"
+            v-model="form.pin"
+            :prefix-icon="UserIcon"
+            placeholder="pin"
+            size="large"
+            maxlength="11"
+            minlength="11"
+            @input="form.pin = form.pin.slice(0, 11)"
           />
         </el-form-item>
+
         <!--            <el-input-->
         <div class="flex w-full ">
           <el-button
@@ -95,12 +92,7 @@ const loginLoading = ref(false);
 
 const ruleFormRef = ref<FormInstance>();
 const rules = reactive<FormRules>({
-  email:{
-    required: true,
-    trigger: "blur",
-    message: "Please enter email",
-    type:"email"
-  }
+
 });
 const submitForm = async (formEl: FormInstance | undefined) => {
   loginLoading.value = true;
@@ -143,12 +135,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       }
     } else {
       loginLoading.value = false;
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        html: '<p class="text-red-400">Fill All required Fields</p>',
-        timer: 4000,
-      });
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'Error',
+      //   html: '<p class="text-red-400">Fill All required Fields</p>',
+      //   timer: 4000,
+      // });
     }
     loading.value = false;
   });
