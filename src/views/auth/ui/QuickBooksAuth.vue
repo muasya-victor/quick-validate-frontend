@@ -23,7 +23,7 @@ const routeToBackend = ()=>{
       <div class="w-full max-w-sm px-6">
         <button 
           type="" 
-          class="w-full bg-red-500 hover:bg-red-600 text-white border-none hover:border-none py-5 rounded-xl font-semibold text-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 group"
+          class="w-full bg-gradient-to-br from-blue-500 via-blue-300 to-red-500 hover:bg-red-600 text-white border-none hover:border-none py-5 rounded-xl font-semibold text-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 group"
           @click="routeToBackend"
         >
           Connect QuickBooks

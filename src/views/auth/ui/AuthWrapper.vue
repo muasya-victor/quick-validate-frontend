@@ -93,7 +93,7 @@ const openExternalLink = (url) => {
 <template>
   <div class="min-h-screen grid md:grid-cols-12">
     <!-- Left Section - Integration Options -->
-    <div class="hidden md:flex md:col-span-7 bg-gradient-to-br from-red-300 via-red-100 to-red-500">
+    <div class="hidden md:flex md:col-span-7 bg-gradient-to-br from-blue-100 via-blue-50 to-red-500">
       <div class="w-full px-8 py-12 flex flex-col">
         <!-- Top Logo Area -->
         <div class="flex-shrink-0 ">
@@ -187,7 +187,7 @@ const openExternalLink = (url) => {
       <div class="w-full h-full flex flex-col">
         <!-- Mobile Header (visible on small screens) -->
         <div class="md:hidden flex items-center justify-between p-4 border-b">
-          <img src="/logo.png" alt="Company Logo" class="h-6 w-auto" />
+          <img src="/logo.png" alt="Company Logo" class="h-24 w-auto" />
         </div>
 
         <!-- Main Content -->
