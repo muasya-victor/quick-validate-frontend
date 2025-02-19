@@ -65,9 +65,9 @@ import {
   FilterOutlined,
   PlusOutlined,
   ReloadOutlined,
-  SettingOutlined,
+  SettingOutlined
 } from "@ant-design/icons-vue";
-import {defineEmits} from 'vue'
+import {defineEmits} from 'vue';
 
 
 export default {
@@ -134,7 +134,7 @@ export default {
 
       if (this.$route?.name === 'invoice-list'){
         store
-            .dispatch("fetchList", {url:'/query/quickbooks/invoices/'})
+            .dispatch("fetchList", {url:'query/quickbooks/invoices/'})
             .then((resp) => {
               store
                   .dispatch("fetchList", {url})
@@ -154,7 +154,7 @@ export default {
       }
       if (this.$route?.name === 'credit-note'){
         store
-            .dispatch("fetchList", {url:'/query/quickbooks/creditnotes/'})
+            .dispatch("fetchList", {url:'query/quickbooks/creditnotes/'})
             .then((resp) => {
               store
                   .dispatch("fetchList", {url})
@@ -174,7 +174,7 @@ export default {
       }
       if (this.$route?.name === 'customer-list'){
         store
-            .dispatch("fetchList", {url:'/query/quickbooks/customers/'})
+            .dispatch("fetchList", {url:'query/quickbooks/customers/'})
             .then((resp) => {
               store
                   .dispatch("fetchList", {url})
@@ -190,8 +190,8 @@ export default {
               this.loading = false;
             });
 
-      //   return
-      // }
+        return
+      }
 
       store
           .dispatch("fetchList", {url})
