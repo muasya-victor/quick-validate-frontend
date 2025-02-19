@@ -190,13 +190,14 @@ export default {
               this.loading = false;
             });
 
-        return
-      }
+      //   return
+      // }
 
       store
           .dispatch("fetchList", {url})
           .then((resp) => {
-            this.dataSource = resp.data;
+            console.log("here")
+            this.dataSource = resp.data?.results;
             this.loading = false;
           })
           .catch(() => {

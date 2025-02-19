@@ -12,47 +12,44 @@
           class="w-full flex flex-col gap-4"
           label-position="top"
       >
-        <el-form-item label="Name" prop="fully_qualified_name"
+        <el-form-item label="Name" prop="name"
                       :rules="[
-            {
-              required: true,
-              message: 'Please input name',
-              trigger: 'blur',
-            }
+           
          ]"
         >
           <el-input
-              v-model="form.fully_qualified_name"
+              v-model="form.name"
               :prefix-icon="UserIcon"
               placeholder="name"
               size="large"
           />
         </el-form-item>
-        <el-form-item label="Email" prop="primary_email_address"
-                      :rules="[
-            {
-              required: true,
-              message: 'Please input email',
-              trigger: 'blur',
-              type: 'email',
-            }
-         ]"
+        <el-form-item label="Email" prop="email"
         >
           <el-input
-              v-model="form.primary_email_address"
+              v-model="form.email"
               :prefix-icon="UserIcon"
               placeholder="email"
               size="large"
           />
         </el-form-item>
-        <el-form-item label="Kra Pin" prop="pin">
+        <el-form-item label="Kra Pin"
+          :rules='
+            [
+            { min: 11, max: 11, message: "KRA PIN must be exactly 11 characters", trigger: "blur" }
+          ]' 
+         prop="pin">
           <el-input
-              v-model="form.pin"
-              :prefix-icon="UserIcon"
-              placeholder="pin"
-              size="large"
+            v-model="form.pin"
+            :prefix-icon="UserIcon"
+            placeholder="pin"
+            size="large"
+            maxlength="11"
+            minlength="11"
+            @input="form.pin = form.pin.slice(0, 11)"
           />
         </el-form-item>
+
         <!--            <el-input-->
         <div class="flex w-full ">
           <el-button
@@ -95,12 +92,7 @@ const loginLoading = ref(false);
 
 const ruleFormRef = ref<FormInstance>();
 const rules = reactive<FormRules>({
-  email:{
-    required: true,
-    trigger: "blur",
-    message: "Please enter email",
-    type:"email"
-  }
+
 });
 const submitForm = async (formEl: FormInstance | undefined) => {
   loginLoading.value = true;
@@ -113,7 +105,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         delete form.updated_time
         store
             .dispatch("patchData", {
-              url: "customers-list",
+              url: "get/customers/list",
               data: form,
               id:route.params.id
             })
@@ -129,7 +121,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       else {
         store
             .dispatch("postData", {
-              url: "customer-list",
+              url: "get/customers/list",
               data: form
             })
             .then((resp) => {
@@ -143,12 +135,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       }
     } else {
       loginLoading.value = false;
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        html: '<p class="text-red-400">Fill All required Fields</p>',
-        timer: 4000,
-      });
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'Error',
+      //   html: '<p class="text-red-400">Fill All required Fields</p>',
+      //   timer: 4000,
+      // });
     }
     loading.value = false;
   });
@@ -159,7 +151,7 @@ const route = useRoute()
 const getOnMount = ()=>{
   console.log(route?.name)
   if (route?.name === "edit-customer") {
-    store.dispatch('fetchSingleItem', {url:'customers-list', id:route.params.id}).then((res)=>{
+    store.dispatch('fetchSingleItem', {url:'get/customers/list', id:route.params.id}).then((res)=>{
       Object.assign(form, res?.data);
       console.log(res?.data)
     })
