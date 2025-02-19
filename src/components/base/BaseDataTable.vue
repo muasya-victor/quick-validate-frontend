@@ -134,7 +134,27 @@ export default {
 
       if (this.$route?.name === 'invoice-list'){
         store
-            .dispatch("fetchList", {url:'invoices-list'})
+            .dispatch("fetchList", {url:'/query/quickbooks/invoices/'})
+            .then((resp) => {
+              store
+                  .dispatch("fetchList", {url})
+                  .then((resp) => {
+                    this.dataSource = resp.data;
+                    this.loading = false;
+                  })
+                  .catch(() => {
+                    this.loading = false;
+                  });
+            })
+            .catch(() => {
+              this.loading = false;
+            });
+
+        return
+      }
+      if (this.$route?.name === 'credit-note'){
+        store
+            .dispatch("fetchList", {url:'/query/quickbooks/creditnotes/'})
             .then((resp) => {
               store
                   .dispatch("fetchList", {url})
@@ -154,7 +174,7 @@ export default {
       }
       if (this.$route?.name === 'customer-list'){
         store
-            .dispatch("fetchList", {url:'customers'})
+            .dispatch("fetchList", {url:'/query/quickbooks/customers/'})
             .then((resp) => {
               store
                   .dispatch("fetchList", {url})
