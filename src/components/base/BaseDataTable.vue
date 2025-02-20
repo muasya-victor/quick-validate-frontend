@@ -139,11 +139,26 @@ export default {
               store
                   .dispatch("fetchList", {url})
                   .then((resp) => {
-                    this.dataSource = resp.data;
+                    this.dataSource = resp.data?.results;
                     this.loading = false;
                   })
-                  .catch(() => {
-                    this.loading = false;
+                  .catch((err) => {
+                    store
+            .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+            .then((resp) => {
+                store
+                    .dispatch("fetchList", {url})
+                    .then((resp) => {
+                      this.dataSource = resp.data?.results;
+                      this.loading = false;
+                    })
+                    .catch(() => {
+                      this.loading = false;
+                    });
+              })
+              .catch(() => {
+                this.loading = false;
+              });
                   });
             })
             .catch(() => {
@@ -152,14 +167,28 @@ export default {
 
         return
       }
-      if (this.$route?.name === 'credit-note'){
+      else if (this.$route?.name === 'credit-note'){
         store
             .dispatch("fetchList", {url:'query/quickbooks/creditnotes/'})
             .then((resp) => {
               store
                   .dispatch("fetchList", {url})
                   .then((resp) => {
-                    this.dataSource = resp.data;
+                    this.dataSource = resp.data?.results;
+                    this.loading = false;
+                  })
+                  .catch(() => {
+                    this.loading = false;
+                  });
+            })
+            .catch(() => {
+              store
+            .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+            .then((resp) => {
+              store
+                  .dispatch("fetchList", {url})
+                  .then((resp) => {
+                    this.dataSource = resp.data?.results;
                     this.loading = false;
                   })
                   .catch(() => {
@@ -169,17 +198,32 @@ export default {
             .catch(() => {
               this.loading = false;
             });
+            });
 
         return
       }
-      if (this.$route?.name === 'customer-list'){
+      else if (this.$route?.name === 'customer-list'){
         store
             .dispatch("fetchList", {url:'query/quickbooks/customers/'})
             .then((resp) => {
               store
                   .dispatch("fetchList", {url})
                   .then((resp) => {
-                    this.dataSource = resp.data;
+                    this.dataSource = resp.data?.results;
+                    this.loading = false;
+                  })
+                  .catch(() => {
+                    this.loading = false;
+                  });
+            })
+            .catch(() => {
+              store
+            .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+            .then((resp) => {
+              store
+                  .dispatch("fetchList", {url})
+                  .then((resp) => {
+                    this.dataSource = resp.data?.results;
                     this.loading = false;
                   })
                   .catch(() => {
@@ -189,11 +233,12 @@ export default {
             .catch(() => {
               this.loading = false;
             });
+            });
 
         return
       }
-
-      store
+      else {
+        store
           .dispatch("fetchList", {url})
           .then((resp) => {
             console.log("here")
@@ -203,6 +248,7 @@ export default {
           .catch(() => {
             this.loading = false;
           });
+      }
     },
     toggleFilters() {
       this.showFilters = !this.showFilters
