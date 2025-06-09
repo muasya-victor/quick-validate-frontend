@@ -3,7 +3,6 @@ import {ArrowRight, Delete, Download, EditPen, Open} from "@element-plus/icons-v
 import BaseDataTable from "@/components/base/BaseDataTable.vue";
 import ValidatedInvoice from "@/views/invoices/ValidatedInvoice.vue";
 import {reactive, ref, watch} from "vue"
-import router from "@/router/index.js";
 import store from "@/store/index.js";
 import {FormInstance, FormRules} from "element-plus";
 import {formatDate} from "@/utility/functions"
@@ -18,14 +17,9 @@ const columns = ref([
     key: "download_action",
   },
   {
-    title: "Invoice Number",
-    dataIndex: "invoice_number",
-    key: "invoice_number",
-  },
-  {
-    title: "Total Amount",
-    dataIndex: "total_taxable_amount",
-    key: "invoice_number",
+    title: "Credit Note Number",
+    dataIndex: "credit_note_number",
+    key: "credit_note_number",
   },
   {
     title: "Customer Name",
@@ -38,6 +32,16 @@ const columns = ref([
     key: "pin",
   },
   {
+    title: "Amount",
+    dataIndex: "total_taxable_amount",
+    key: "total_taxable_amount",
+  },
+  // {
+  //   title: "Original Invoice Number",
+  //   dataIndex: "",
+  //   key: "inv",
+  // },
+  {
     title: "Actions",
     dataIndex: "",
     key: "actions",
@@ -47,54 +51,49 @@ const columns = ref([
 const loadingCustomers = ref(false)
 const customers = ref([])
 
-const getCustomers = ()=>{
-  loadingCustomers.value = true
-  customers.value = []
-  store.dispatch('fetchList', {url:'customers-list'})
-      .then((resp)=>{
-        resp.data.map((customer) => {
-          customers.value.push({
-            label: `${customer.fully_qualified_name} - ${customer.pin}`,
-            value: customer,
-          })
-        })
-        loadingCustomers.value = false
-        // return customers;
-      })
-      .catch((err)=>{
-        loadingCustomers.value = false
-      })
-}
 
 const selectCustomer = (value)=>{
   customerObject.value = value
 }
 
-const validateWithoutCustomer = ref(false)
+const originalInvoiceNumber = ref(null)
 
 const customerObject = ref(null)
 
-const attemptKraValidation = (invoice_number, invoice_id, cfm_date)=>{
+const attemptKraValidation = (credit_note_number, original_invoice_number = originalInvoiceNumber.value, pin)=>{
   store.state.submitLoading = true
-  selected_invoice_id.value = invoice_id
-
+  if(!original_invoice_number ){
+    alert('invoice number is required')
+  }
   store.dispatch('postData', {data: {
-      "cfm_date": cfm_date,
-      "invoice_number": invoice_number,
+      "pin": pin,
+      "credit_note_number": credit_note_number,
+      "original_invoice_number": 1001,
     },
-    url:"validate/invoices"})
-      .then((response)=>{
-        showValidatedInvoice.value = true;
-        validatedInvoicePdfUrl.value = response.data?.download_url;
-        store.state.submitLoading = false
-
-      })
+    url:"validate/creditnotes"})
       .catch((err)=>{
         showValidatedInvoice.value = false;
         store.state.submitLoading = false
       })
   ;
 }
+
+// Get Invoices beloging to the user
+const userInvoices = ref([])
+const invoicesLoading = ref(false)
+const getInvoices = () => {
+  userInvoices.value = [] // set list to empty
+  invoicesLoading.value = true
+  store.dispatch('fetchList', {url: 'get/user/invoices'})
+    .then((res) => {
+      userInvoices.value = res.data.results
+      invoicesLoading.value = false
+    })
+    .catch((err)=>{
+      invoicesLoading.value = false
+    })
+}
+
 
 const viewSelectedInvoice = (download_url)=>{
   console.log(download_url, 'url')
@@ -108,15 +107,15 @@ const form = ref({
 const postManually = ref(false)
 
 const invoiceNumberFilter = ref('')
-const backendUrl = ref('get/user/invoices')
+const backendUrl = ref('get/user/creditnotes')
 
 watch(invoiceNumberFilter, (newFilterValue) => {
   if (newFilterValue) {
     // Ensure no slash before '?'
-    backendUrl.value = `get/user/invoices?invoice_number=${newFilterValue}`;
+    backendUrl.value = `get/user/creditnotes?credit_note_number=${newFilterValue}`;
     store.state.refreshData = true;
   } else {
-    backendUrl.value = 'get/user/invoices';
+    backendUrl.value = 'get/user/creditnotes';
     store.state.refreshData = false;
   }
 });
@@ -154,27 +153,19 @@ const handleDialogClose = ()=> {
         :show-other-items="true"
         :fetch-url="backendUrl"
         v-if="!store.state.submitLoading"
-        title="Invoices">
+        title="Credit Notes">
 
       <template #otherItems>
-        <el-input style="width: 250px" placeholder="search by invoice number" v-model="invoiceNumberFilter"/>
-
-        <el-switch
-            v-model="validateWithoutCustomer"
-            size="large"
-            active-text="Open Validation"
-            inactive-text="Customer Validation"
-        />
+        <el-input placeholder="search by credit note number" v-model="invoiceNumberFilter"/>
 
         <!-- <el-select
             clearable
-            filterable
             size="large"
             @focus="getCustomers"
             @change="selectCustomer"
             placeholder="Select Customer To Validate"
             :loading="loadingCustomers"
-            style="width: 300px"
+            style="width: 240px"
         >
           <el-option
               v-for="item in customers"
@@ -187,6 +178,15 @@ const handleDialogClose = ()=> {
 
         <el-tag v-if="customerObject !== null" type="success" class="h-full" size="large">Customer :
           {{customerObject?.fully_qualified_name}} - {{customerObject?.pin}}</el-tag> -->
+
+          <el-select placeholder="select invoice number"
+            @focus="getInvoices"
+            class="min-w-[200px]"
+            :loading="invoicesLoading"
+            size="large"
+            v-model="originalInvoiceNumber">
+              <el-option v-for="invoice in userInvoices" :key="invoice" :value="invoice?.invoice_number"  />
+          </el-select>
       </template>
 
       <template v-slot:bodyCell="slotProps">
@@ -198,9 +198,12 @@ const handleDialogClose = ()=> {
         <template v-if="slotProps.column.key === 'customer'">
           {{slotProps?.text?.name}}
         </template>
+        
         <template v-if="slotProps.column.key === 'pin'">
           <el-tag v-if="slotProps.text?.customer?.pin === null">Null</el-tag>
-          {{slotProps.text?.pin}}
+          <div>
+            {{slotProps.text?.customer?.pin}}
+          </div>
         </template>
 
         <template v-if="slotProps.column.key === 'is_active'">
@@ -216,7 +219,10 @@ const handleDialogClose = ()=> {
         <template v-if="slotProps.column.key === 'actions'">
           <ElButton type="primary"
                     v-if="slotProps.text?.is_validated === false && customer !== null"
-                    @click="attemptKraValidation(slotProps.text?.invoice_number, slotProps?.text?.id, slotProps?.text?.cfm_date)"
+                    @click="attemptKraValidation(slotProps.text?.credit_note_number,
+                      slotProps?.text?.original_invoice_number, 
+                      slotProps?.text?.customer?.pin
+                      )"
                     size="default"
                     plain>
             <template #icon>

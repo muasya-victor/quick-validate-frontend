@@ -65,9 +65,9 @@ import {
   FilterOutlined,
   PlusOutlined,
   ReloadOutlined,
-  SettingOutlined,
+  SettingOutlined
 } from "@ant-design/icons-vue";
-import {defineEmits} from 'vue'
+import {defineEmits} from 'vue';
 
 
 export default {
@@ -134,16 +134,31 @@ export default {
 
       if (this.$route?.name === 'invoice-list'){
         store
-            .dispatch("fetchList", {url:'invoices-list'})
+            .dispatch("fetchList", {url:'query/quickbooks/invoices/'})
             .then((resp) => {
               store
                   .dispatch("fetchList", {url})
                   .then((resp) => {
-                    this.dataSource = resp.data;
+                    this.dataSource = resp.data?.results;
                     this.loading = false;
                   })
-                  .catch(() => {
-                    this.loading = false;
+                  .catch((err) => {
+                    store
+            .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+            .then((resp) => {
+                store
+                    .dispatch("fetchList", {url})
+                    .then((resp) => {
+                      this.dataSource = resp.data?.results;
+                      this.loading = false;
+                    })
+                    .catch(() => {
+                      this.loading = false;
+                    });
+              })
+              .catch(() => {
+                this.loading = false;
+              });
                   });
             })
             .catch(() => {
@@ -152,14 +167,28 @@ export default {
 
         return
       }
-      if (this.$route?.name === 'customer-list'){
+      else if (this.$route?.name === 'credit-note'){
         store
-            .dispatch("fetchList", {url:'customers'})
+            .dispatch("fetchList", {url:'query/quickbooks/creditnotes/'})
             .then((resp) => {
               store
                   .dispatch("fetchList", {url})
                   .then((resp) => {
-                    this.dataSource = resp.data;
+                    this.dataSource = resp.data?.results;
+                    this.loading = false;
+                  })
+                  .catch(() => {
+                    this.loading = false;
+                  });
+            })
+            .catch(() => {
+              store
+            .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+            .then((resp) => {
+              store
+                  .dispatch("fetchList", {url})
+                  .then((resp) => {
+                    this.dataSource = resp.data?.results;
                     this.loading = false;
                   })
                   .catch(() => {
@@ -169,19 +198,57 @@ export default {
             .catch(() => {
               this.loading = false;
             });
+            });
 
         return
       }
+      else if (this.$route?.name === 'customer-list'){
+        store
+            .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+            .then((resp) => {
+              store
+                  .dispatch("fetchList", {url})
+                  .then((resp) => {
+                    this.dataSource = resp.data?.results;
+                    this.loading = false;
+                  })
+                  .catch(() => {
+                    this.loading = false;
+                  });
+            })
+            .catch(() => {
+              store
+            .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+            .then((resp) => {
+              store
+                  .dispatch("fetchList", {url})
+                  .then((resp) => {
+                    this.dataSource = resp.data?.results;
+                    this.loading = false;
+                  })
+                  .catch(() => {
+                    this.loading = false;
+                  });
+            })
+            .catch(() => {
+              this.loading = false;
+            });
+            });
 
-      store
+        return
+      }
+      else {
+        store
           .dispatch("fetchList", {url})
           .then((resp) => {
-            this.dataSource = resp.data;
+            console.log("here")
+            this.dataSource = resp.data?.results;
             this.loading = false;
           })
           .catch(() => {
             this.loading = false;
           });
+      }
     },
     toggleFilters() {
       this.showFilters = !this.showFilters

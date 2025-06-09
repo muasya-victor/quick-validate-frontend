@@ -14,19 +14,15 @@ const rules = reactive<FormRules>({});
 const columns = ref([
   {
     title: "Name",
-    dataIndex: "fully_qualified_name",
-    key: "fully_qualified_name",
+    dataIndex: "name",
+    key: "name",
   },
   {
     title: "Email",
-    dataIndex: "primary_email_address",
-    key: "primary_email_address",
+    dataIndex: "email",
+    key: "email",
   },
   {
-    title: "Date Created",
-    dataIndex: "created_time",
-    key: "created_time",
-  },{
     title: "KRA PIN",
     dataIndex: "pin",
     key: "pin",
@@ -73,7 +69,7 @@ const form = ref({
 const postManually = ref(false)
 
 const invoiceNumberFilter = ref('')
-const backendUrl = ref('customers-list')
+const backendUrl = ref('get/customers/list')
 
 watch(invoiceNumberFilter, (newFilterValue) => {
   if (newFilterValue) {
@@ -160,7 +156,20 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         <template v-if="slotProps.column.key === 'updated_date'">
           {{formatDate(slotProps.text)}}
         </template>
+        <template v-if="slotProps.column.key === 'pin'">
+          <el-tag type="info" v-if="slotProps.text == null">Null</el-tag>
+          <div v-else>{{ slotProps?.text }}</div>
+        </template>
 
+        <template v-if="slotProps.column.key === 'email'">
+          <el-tag v-if="slotProps?.text == null">
+            Null
+          </el-tag>
+          <div v-else>
+            {{slotProps?.text}}
+          </div>
+
+        </template>
         <template v-if="slotProps.column.key === 'is_active'">
           <el-tag size="large" type="success" v-if="slotProps.text === true" class="capitalize">
             {{slotProps.text}}
