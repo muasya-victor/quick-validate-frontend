@@ -154,6 +154,9 @@ const selectCreditNotes = (value)=>{
 const clearInvoice = ()=>{
   invoiceNumberFilter.value = ''
 }
+const clearCreditNotes = ()=>{
+  creditNumberFilter.value = ''
+}
 
 </script>
 
@@ -244,6 +247,12 @@ const clearInvoice = ()=>{
             {{ item?.total_taxable_amount }}
           </el-option>
         </el-select>
+
+         <el-tag @close="clearCreditNotes"
+            v-if="creditNumberFilter !== ''" closable type="success" class="h-full flex items-center gap-2" size="large">
+              Credit Note :
+              {{creditNumberFilter}}
+          </el-tag>
       </template>
 
       <template v-slot:bodyCell="slotProps">
