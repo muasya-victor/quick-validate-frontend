@@ -33,8 +33,8 @@ const columns = ref([
   },
   {
     title: "Amount",
-    dataIndex: "total_taxable_amount",
-    key: "total_taxable_amount",
+    dataIndex: "",
+    key: "amount",
   },
   // {
   //   title: "Original Invoice Number",
@@ -81,10 +81,24 @@ const attemptKraValidation = (credit_note_number, original_invoice_number = orig
 // Get Invoices beloging to the user
 const userInvoices = ref([])
 const invoicesLoading = ref(false)
+
 const getInvoices = () => {
   userInvoices.value = [] // set list to empty
   invoicesLoading.value = true
   store.dispatch('fetchList', {url: 'get/user/invoices'})
+    .then((res) => {
+      userInvoices.value = res.data.results
+      invoicesLoading.value = false
+    })
+    .catch((err)=>{
+      invoicesLoading.value = false
+    })
+}
+
+const getCreditNotes = () => {
+  userInvoices.value = [] // set list to empty
+  invoicesLoading.value = true
+  store.dispatch('fetchList', {url: 'get/user/creditnotes'})
     .then((res) => {
       userInvoices.value = res.data.results
       invoicesLoading.value = false
@@ -107,9 +121,10 @@ const form = ref({
 const postManually = ref(false)
 
 const invoiceNumberFilter = ref('')
+const creditNumberFilter = ref('')
 const backendUrl = ref('get/user/creditnotes')
 
-watch(invoiceNumberFilter, (newFilterValue) => {
+watch(creditNumberFilter, (newFilterValue) => {
   if (newFilterValue) {
     // Ensure no slash before '?'
     backendUrl.value = `get/user/creditnotes?credit_note_number=${newFilterValue}`;
@@ -126,8 +141,18 @@ const validatedInvoicePdfUrl = ref('')
 const selected_invoice_id = ref(null)
 const submitLoading = ref(false);
 
+const loadingCreditNotes = ref(false);
+
 const handleDialogClose = ()=> {
   showValidatedInvoice.value = false
+}
+
+const selectCreditNotes = (value)=>{
+  creditNumberFilter.value = value
+}
+
+const clearInvoice = ()=>{
+  invoiceNumberFilter.value = ''
 }
 
 </script>
@@ -156,7 +181,7 @@ const handleDialogClose = ()=> {
         title="Credit Notes">
 
       <template #otherItems>
-        <el-input placeholder="search by credit note number" v-model="invoiceNumberFilter"/>
+        <!-- <el-input placeholder="search by credit note number" v-model="invoiceNumberFilter"/> -->
 
         <!-- <el-select
             clearable
@@ -184,9 +209,41 @@ const handleDialogClose = ()=> {
             class="min-w-[200px]"
             :loading="invoicesLoading"
             size="large"
-            v-model="originalInvoiceNumber">
-              <el-option v-for="invoice in userInvoices" :key="invoice" :value="invoice?.invoice_number"  />
+            v-model="invoiceNumberFilter">
+              <el-option v-for="invoice in userInvoices" :key="invoice" :value="invoice?.invoice_number"  >
+                {{ invoice?.invoice_number }} ,
+                {{ invoice?.customer?.name }} ,
+                {{ invoice?.total_taxable_amount }}
+              </el-option>
           </el-select>
+
+          <el-tag @close="clearInvoice"
+            v-if="invoiceNumberFilter !== ''" closable type="success" class="h-full flex items-center gap-2" size="large">
+              Invoice :
+              {{invoiceNumberFilter}}
+          </el-tag>
+
+          <el-select
+            clearable
+            filterable
+            size="large"
+            class="min-w-[200px]"
+            @focus="getCreditNotes"
+            @change="selectCreditNotes"
+            placeholder="Search by Credit Notes"
+            :loading="loadingCreditNotes"
+            style="width: 300px"
+        >
+          <el-option
+              v-for="item in userInvoices"
+              :key="item.value"
+              :value="item.credit_note_number"
+          >
+            {{ item?.credit_note_number }} ,
+            {{ item?.customer?.name }} ,
+            {{ item?.total_taxable_amount }}
+          </el-option>
+        </el-select>
       </template>
 
       <template v-slot:bodyCell="slotProps">
@@ -197,6 +254,15 @@ const handleDialogClose = ()=> {
 
         <template v-if="slotProps.column.key === 'customer'">
           {{slotProps?.text?.name}}
+        </template>
+
+        <template v-if="slotProps.column.key === 'amount'">
+          <div v-if="slotProps?.text?.total_taxable_amount !== null">
+            {{slotProps?.text?.total_taxable_amount}}
+          </div>
+          <div v-else>
+            0
+          </div>
         </template>
         
         <template v-if="slotProps.column.key === 'pin'">

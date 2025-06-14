@@ -24,8 +24,8 @@ const columns = ref([
   },
   {
     title: "Total Amount",
-    dataIndex: "total_taxable_amount",
-    key: "invoice_number",
+    dataIndex: "",
+    key: "total_taxable_amount",
   },
   {
     title: "Customer Name",
@@ -201,6 +201,16 @@ const handleDialogClose = ()=> {
         <template v-if="slotProps.column.key === 'customer'">
           {{slotProps?.text?.name}}
         </template>
+
+        <template v-if="slotProps.column.key === 'total_taxable_amount'">
+          <div v-if="slotProps?.text?.total_taxable_amount !== null">
+            {{slotProps?.text?.total_taxable_amount}}
+          </div>
+          <div v-else>
+            0
+          </div>
+        </template>
+
         <template v-if="slotProps.column.key === 'pin'">
           <el-tag v-if="slotProps.text?.customer?.pin === null">Null</el-tag>
           {{slotProps.text?.customer?.pin}}
