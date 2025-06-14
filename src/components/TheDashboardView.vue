@@ -69,12 +69,13 @@ watch(route, updateBreadcrumbs, { immediate: true });
       </div>
 
       <div class="w-full flex items-center justify-end md:justify-between h-fit p-0">
-        <el-breadcrumb :style="breadcrumbStyle" separator="/" class="hidden md:block">
+        <!-- <el-breadcrumb :style="breadcrumbStyle" separator="/" class="hidden md:block">
           <el-breadcrumb-item v-for="(breadcrumb, index) in breadcrumbs" :key="index">
             <span v-if="breadcrumb?.label === 'Dashboard' || breadcrumb?.label === 'dashboard'">Dashboard </span>
             <router-link v-else :to="breadcrumb.path">{{ breadcrumb.label }}</router-link>
           </el-breadcrumb-item>
-        </el-breadcrumb>
+        </el-breadcrumb> -->
+         <div></div>
 
 
         <el-popover
