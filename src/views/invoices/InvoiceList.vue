@@ -44,35 +44,30 @@ const columns = ref([
   },
 ]);
 
-const loadingCustomers = ref(false)
-const customers = ref([])
+const loadingInvoices = ref(false)
+const invoices = ref([])
 
-const getCustomers = ()=>{
-  loadingCustomers.value = true
-  customers.value = []
-  store.dispatch('fetchList', {url:'customers-list'})
+const getInvoices = ()=>{
+  loadingInvoices.value = true
+  invoices.value = []
+  store.dispatch('fetchList', {url:'get/user/invoices'})
       .then((resp)=>{
-        resp.data.map((customer) => {
-          customers.value.push({
-            label: `${customer.fully_qualified_name} - ${customer.pin}`,
-            value: customer,
-          })
-        })
-        loadingCustomers.value = false
-        // return customers;
+        console.log(resp, 'invoices');
+        invoices.value = resp?.data?.results
+        loadingInvoices.value = false
+        // return invoices;
       })
       .catch((err)=>{
-        loadingCustomers.value = false
+        loadingInvoices.value = false
       })
 }
 
-const selectCustomer = (value)=>{
-  customerObject.value = value
+const selectInvoice = (value)=>{
+  invoiceNumberFilter.value = value
 }
 
 const validateWithoutCustomer = ref(false)
 
-const customerObject = ref(null)
 
 const attemptKraValidation = (invoice_number, invoice_id, cfm_date)=>{
   store.state.submitLoading = true
@@ -112,14 +107,17 @@ const backendUrl = ref('get/user/invoices')
 
 watch(invoiceNumberFilter, (newFilterValue) => {
   if (newFilterValue) {
-    // Ensure no slash before '?'
-    backendUrl.value = `get/user/invoices?invoice_number=${newFilterValue}`;
+    backendUrl.value = `get/user/invoices?invoice_number=${newFilterValue}&customer_name=${newFilterValue}&total_taxable_amount=${newFilterValue}`;
     store.state.refreshData = true;
   } else {
     backendUrl.value = 'get/user/invoices';
     store.state.refreshData = false;
   }
 });
+
+const clearInvoice = ()=>{
+  invoiceNumberFilter.value = ''
+}
 
 
 const showValidatedInvoice = ref(false)
@@ -157,36 +155,41 @@ const handleDialogClose = ()=> {
         title="Invoices">
 
       <template #otherItems>
-        <el-input style="width: 250px" placeholder="search by invoice number" v-model="invoiceNumberFilter"/>
-
-        <el-switch
+        <!-- <el-switch
             v-model="validateWithoutCustomer"
             size="large"
             active-text="Open Validation"
             inactive-text="Customer Validation"
-        />
+        /> -->
 
-        <!-- <el-select
+        <el-select
             clearable
             filterable
             size="large"
-            @focus="getCustomers"
-            @change="selectCustomer"
-            placeholder="Select Customer To Validate"
-            :loading="loadingCustomers"
+            @focus="getInvoices"
+            @change="selectInvoice"
+            placeholder="Search by Invoice"
+            :loading="loadingInvoices"
             style="width: 300px"
         >
           <el-option
-              v-for="item in customers"
+              v-for="item in invoices"
               :key="item.value"
-              :label="item.label"
-              :value="item.value"
-          />
+              :value="item.invoice_number"
+          >
+            {{ item?.invoice_number }} ,
+            {{ item?.customer?.name }} ,
+            {{ item?.total_taxable_amount }}
+          </el-option>
         </el-select>
 
 
-        <el-tag v-if="customerObject !== null" type="success" class="h-full" size="large">Customer :
-          {{customerObject?.fully_qualified_name}} - {{customerObject?.pin}}</el-tag> -->
+        <el-tag @close="clearInvoice"
+         v-if="invoiceNumberFilter !== ''" closable type="success" class="h-full flex items-center gap-2" size="large">
+          Invoice :
+          {{invoiceNumberFilter}}
+        </el-tag>
+
       </template>
 
       <template v-slot:bodyCell="slotProps">
@@ -200,7 +203,7 @@ const handleDialogClose = ()=> {
         </template>
         <template v-if="slotProps.column.key === 'pin'">
           <el-tag v-if="slotProps.text?.customer?.pin === null">Null</el-tag>
-          {{slotProps.text?.pin}}
+          {{slotProps.text?.customer?.pin}}
         </template>
 
         <template v-if="slotProps.column.key === 'is_active'">
