@@ -103,8 +103,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
         .then((resp) => {
           localStorage.setItem("authData", JSON.stringify(resp.data));
           loginLoading.value = false;
+          if (resp.data?.user?.user_type === 'system_admin'){
+            router.push({name:'client-list'})
+          }else if (resp.data?.user?.user_type === 'client'){
+            router.push({name:'invoice-list'})
+          }
+          
 
-          router.push({name:'invoice-list'})
         })
           .catch((err)=>{
             loginLoading.value = false;

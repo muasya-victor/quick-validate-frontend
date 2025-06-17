@@ -23,6 +23,8 @@ import ComingSoon from "@/components/ComingSoon.vue";
 import CustomerList from "@/views/users/CustomerList.vue";
 import CreateEditCustomer from "@/views/users/CreateEditCustomer.vue";
 import CreditNoteList from "../views/credit-note/CreditNoteList.vue";
+import ClientList from "../views/clients/ClientList.vue";
+import QuickBooksDetails from "../views/quickbooks/QuickBooksDetails.vue";
 
 const routes = [
   {
@@ -207,6 +209,26 @@ const routes = [
           meta: {
             slug: 'Authorise Quickbooks',
           },
+        },
+        {
+          name: 'client-list',
+          path: 'client-list',
+          component: ClientList,
+          requiresAuth: true,
+          meta: {
+            slug: 'Client List',
+          },
+          children: [
+              {
+              name: 'edit-client-qbo-details',
+              path: 'edit-client-qbo-details/:id',
+              component: QuickBooksDetails,
+              requiresAuth: true,
+              meta: {
+                slug: 'QBO Details',
+              }
+              }
+          ]
         },
       ]
 

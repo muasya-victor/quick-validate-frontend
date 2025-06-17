@@ -8,20 +8,11 @@
   >
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
-      <el-form-item label="Client Id" prop="quickbooks_client_id">
+      <el-form-item label="Pin" prop="pin">
         <el-input
-            v-model="form.quickbooks_client_id"
+            v-model="form.pin"
             :prefix-icon="UserIcon"
-            placeholder="client Id"
-            size="large"
-            type="text"
-        />
-      </el-form-item>
-      <el-form-item label="Client Secret" prop="quickbooks_client_secret">
-        <el-input
-            v-model="form.quickbooks_client_secret"
-            :prefix-icon="UserIcon"
-            placeholder="client Secret"
+            placeholder="client pin"
             size="large"
             type="text"
         />
@@ -38,6 +29,26 @@
       <el-form-item label="Minor Version" prop="quickbooks_minorversion">
         <el-input
             v-model="form.quickbooks_minorversion"
+            :prefix-icon="UserIcon"
+            placeholder="Minor Version"
+            size="large"
+            type="text"
+        />
+      </el-form-item>
+
+      <el-form-item label="Branch Id" prop="branch_id">
+        <el-input
+            v-model="form.branch_id"
+            :prefix-icon="UserIcon"
+            placeholder="Minor Version"
+            size="large"
+            type="text"
+        />
+      </el-form-item>
+
+      <el-form-item label="Cmckey" prop="cmckey">
+        <el-input
+            v-model="form.cmckey"
             :prefix-icon="UserIcon"
             placeholder="Minor Version"
             size="large"
@@ -75,6 +86,9 @@ import {useRoute} from "vue-router"
 
 const route = useRoute()
 
+console.log(route?.params?.id);
+
+
 const loading = ref(false);
 
 const form = ref({
@@ -95,7 +109,7 @@ const setData = () => {
 const submitLoading = ref(false);
 
 const fetchQuickBookDetails = ()=>{
-  store.dispatch('fetchList', {url:`quickbook-authentication?user=${authData?.id}`})
+  store.dispatch('fetchList', {url:`quickbook-authentication?user=${route?.params?.id}`})
       .then((res)=>{
         form.value = res.data?.results[0]
       })
