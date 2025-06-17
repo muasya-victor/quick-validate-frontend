@@ -2,17 +2,19 @@
   <div :class="{ 'dark-mode': !$store.getters.getLightMode }" class="px-2 pb-2">
     <div class="flex flex-col w-full h-full">
       <a-table
-          :columns="columns"
-          :data-source="dataSource"
-          :scroll="{ x: 1000 }"
-          :loading="loading"
-          :row-key="(record) => record?.id"
+        :columns="columns"
+        :data-source="dataSource"
+        :scroll="{ x: 1000 }"
+        :loading="loading"
+        :row-key="(record) => record?.id"
+        :pagination="pagination"
+        @change="handleTableChange"
       >
         <template #bodyCell="{ column, text }" class="w-full">
           <slot :column="column" :text="text" name="bodyCell"></slot>
         </template>
         <template #title>
-          <div class="w-full py-4 flex flex-col md:justify-between  md:flex-row flex-wrap gap-4
+          <div class="w-full py-4 flex flex-col md:justify-between md:flex-row flex-wrap gap-4
                  bg-white border-b rounded-t border-b-gray-100 md:items-center">
             <div class="font-bold text-xl text-gray-600">{{ title }}</div>
             <el-input placeholder="Search"
@@ -57,7 +59,7 @@
   </div>
 </template>
 
-<script >
+<script>
 import store from "../../store"
 import {Table} from "ant-design-vue"
 import {
@@ -68,7 +70,6 @@ import {
   SettingOutlined
 } from "@ant-design/icons-vue";
 import {defineEmits} from 'vue';
-
 
 export default {
   name: "BaseTable",
@@ -85,6 +86,14 @@ export default {
       dataSource: [],
       showFilters: false,
       loading: true,
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0,
+        showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '50', '100'],
+        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+      },
     };
   },
   props: {
@@ -103,7 +112,8 @@ export default {
     showOtherItems: {
       type: Boolean,
       default: false,
-    }, showSearch: {
+    }, 
+    showSearch: {
       type: Boolean,
       default: false,
     },
@@ -129,42 +139,47 @@ export default {
     emit() {
       return defineEmits(['trailingReload'])
     },
-    queryData(url) {
+    queryData(url, pagination = {}) {
       this.loading = true;
+      const params = {
+        page: pagination.current || this.pagination.current,
+        page_size: pagination.pageSize || this.pagination.pageSize,
+      };
 
       if (this.$route?.name === 'invoice-list'){
         store
             .dispatch("fetchList", {url:'query/quickbooks/invoices/'})
             .then((resp) => {
               store
-                  .dispatch("fetchList", {url})
+                  .dispatch("fetchList", {url, params})
                   .then((resp) => {
                     this.dataSource = resp.data?.results;
+                    this.pagination.total = resp.data?.count || 0;
                     this.loading = false;
                   })
                   .catch((err) => {
                     store
-            .dispatch("fetchList", {url:'query/quickbooks/customers/'})
-            .then((resp) => {
-                store
-                    .dispatch("fetchList", {url})
-                    .then((resp) => {
-                      this.dataSource = resp.data?.results;
-                      this.loading = false;
-                    })
-                    .catch(() => {
-                      this.loading = false;
-                    });
-              })
-              .catch(() => {
-                this.loading = false;
-              });
+                      .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+                      .then((resp) => {
+                        store
+                            .dispatch("fetchList", {url, params})
+                            .then((resp) => {
+                              this.dataSource = resp.data?.results;
+                              this.pagination.total = resp.data?.count || 0;
+                              this.loading = false;
+                            })
+                            .catch(() => {
+                              this.loading = false;
+                            });
+                      })
+                      .catch(() => {
+                        this.loading = false;
+                      });
                   });
             })
             .catch(() => {
               this.loading = false;
             });
-
         return
       }
       else if (this.$route?.name === 'credit-note'){
@@ -172,9 +187,10 @@ export default {
             .dispatch("fetchList", {url:'query/quickbooks/creditnotes/'})
             .then((resp) => {
               store
-                  .dispatch("fetchList", {url})
+                  .dispatch("fetchList", {url, params})
                   .then((resp) => {
                     this.dataSource = resp.data?.results;
+                    this.pagination.total = resp.data?.count || 0;
                     this.loading = false;
                   })
                   .catch(() => {
@@ -183,23 +199,23 @@ export default {
             })
             .catch(() => {
               store
-            .dispatch("fetchList", {url:'query/quickbooks/customers/'})
-            .then((resp) => {
-              store
-                  .dispatch("fetchList", {url})
-                  .then((resp) => {
-                    this.dataSource = resp.data?.results;
-                    this.loading = false;
-                  })
-                  .catch(() => {
-                    this.loading = false;
-                  });
-            })
-            .catch(() => {
-              this.loading = false;
+                .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+                .then((resp) => {
+                  store
+                      .dispatch("fetchList", {url, params})
+                      .then((resp) => {
+                        this.dataSource = resp.data?.results;
+                        this.pagination.total = resp.data?.count || 0;
+                        this.loading = false;
+                      })
+                      .catch(() => {
+                        this.loading = false;
+                      });
+                })
+                .catch(() => {
+                  this.loading = false;
+                });
             });
-            });
-
         return
       }
       else if (this.$route?.name === 'customer-list'){
@@ -207,9 +223,10 @@ export default {
             .dispatch("fetchList", {url:'query/quickbooks/customers/'})
             .then((resp) => {
               store
-                  .dispatch("fetchList", {url})
+                  .dispatch("fetchList", {url, params})
                   .then((resp) => {
                     this.dataSource = resp.data?.results;
+                    this.pagination.total = resp.data?.count || 0;
                     this.loading = false;
                   })
                   .catch(() => {
@@ -218,31 +235,31 @@ export default {
             })
             .catch(() => {
               store
-            .dispatch("fetchList", {url:'query/quickbooks/customers/'})
-            .then((resp) => {
-              store
-                  .dispatch("fetchList", {url})
-                  .then((resp) => {
-                    this.dataSource = resp.data?.results;
-                    this.loading = false;
-                  })
-                  .catch(() => {
-                    this.loading = false;
-                  });
-            })
-            .catch(() => {
-              this.loading = false;
+                .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+                .then((resp) => {
+                  store
+                      .dispatch("fetchList", {url, params})
+                      .then((resp) => {
+                        this.dataSource = resp.data?.results;
+                        this.pagination.total = resp.data?.count || 0;
+                        this.loading = false;
+                      })
+                      .catch(() => {
+                        this.loading = false;
+                      });
+                })
+                .catch(() => {
+                  this.loading = false;
+                });
             });
-            });
-
         return
       }
       else {
         store
-          .dispatch("fetchList", {url})
+          .dispatch("fetchList", {url, params})
           .then((resp) => {
-            console.log("here")
             this.dataSource = resp.data?.results;
+            this.pagination.total = resp.data?.count || 0;
             this.loading = false;
           })
           .catch(() => {
@@ -259,6 +276,11 @@ export default {
     },
     trailingReload() {
       this.$emit('trailingReload')
+    },
+    handleTableChange(pagination, filters, sorter) {
+      this.pagination.current = pagination.current;
+      this.pagination.pageSize = pagination.pageSize;
+      this.queryData(this.fetchUrl, pagination);
     },
     getInvoice(){}
   },
