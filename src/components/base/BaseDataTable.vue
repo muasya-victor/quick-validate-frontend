@@ -146,43 +146,43 @@ export default {
         page_size: pagination.pageSize || this.pagination.pageSize,
       };
 
-      if (this.$route?.name === 'invoice-list'){
-        store
-            .dispatch("fetchList", {url:'get/user/invoices/'})
-            .then((resp) => {
-              store
-                  .dispatch("fetchList", {url, params})
-                  .then((resp) => {
-                    this.dataSource = resp.data?.results;
-                    this.pagination.total = resp.data?.count || 0;
-                    this.loading = false;
-                  })
-                  .catch((err) => {
-                    store
-                      .dispatch("fetchList", {url:'query/quickbooks/customers/'})
-                      .then((resp) => {
-                        store
-                            .dispatch("fetchList", {url, params})
-                            .then((resp) => {
-                              this.dataSource = resp.data?.results;
-                              this.pagination.total = resp.data?.count || 0;
-                              this.loading = false;
-                            })
-                            .catch(() => {
-                              this.loading = false;
-                            });
-                      })
-                      .catch(() => {
-                        this.loading = false;
-                      });
-                  });
-            })
-            .catch(() => {
-              this.loading = false;
-            });
-        return
-      }
-      else if (this.$route?.name === 'credit-note'){
+      // if (this.$route?.name === 'invoice-list'){
+      //   store
+      //       .dispatch("fetchList", {url:'query/quickbooks/invoices/'})
+      //       .then((resp) => {
+      //         store
+      //             .dispatch("fetchList", {url, params})
+      //             .then((resp) => {
+      //               this.dataSource = resp.data?.results;
+      //               this.pagination.total = resp.data?.count || 0;
+      //               this.loading = false;
+      //             })
+      //             .catch((err) => {
+      //               store
+      //                 .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+      //                 .then((resp) => {
+      //                   store
+      //                       .dispatch("fetchList", {url, params})
+      //                       .then((resp) => {
+      //                         this.dataSource = resp.data?.results;
+      //                         this.pagination.total = resp.data?.count || 0;
+      //                         this.loading = false;
+      //                       })
+      //                       .catch(() => {
+      //                         this.loading = false;
+      //                       });
+      //                 })
+      //                 .catch(() => {
+      //                   this.loading = false;
+      //                 });
+      //             });
+      //       })
+      //       .catch(() => {
+      //         this.loading = false;
+      //       });
+      //   return
+      // }
+      if (this.$route?.name === 'credit-note'){
         store
             .dispatch("fetchList", {url:'query/quickbooks/creditnotes/'})
             .then((resp) => {
