@@ -137,73 +137,14 @@ export default {
   },
   methods: {
     emit() {
-      return defineEmits(['trailingReload']);
+      return defineEmits(['trailingReload'])
     },
-  
     queryData(url, pagination = {}) {
       this.loading = true;
-  
-      const limit = pagination.pageSize || this.pagination.pageSize;
-      const currentPage = pagination.current || this.pagination.current;
-      const offset = (currentPage - 1) * limit;
-  
       const params = {
-        limit,
-        offset
+        page: pagination.current || this.pagination.current,
+        page_size: pagination.pageSize || this.pagination.pageSize,
       };
-  
-      store
-        .dispatch("fetchList", { url, params })
-        .then((resp) => {
-          this.dataSource = resp.data?.results || [];
-          this.pagination.total = resp.data?.count || 0;
-          this.pagination.current = currentPage;
-          this.pagination.pageSize = limit;
-          this.loading = false;
-        })
-        .catch(() => {
-          this.loading = false;
-        });
-    }
-  }
-
-
-      // if (this.$route?.name === 'invoice-list'){
-      //   store
-      //       .dispatch("fetchList", {url:'query/quickbooks/invoices/'})
-      //       .then((resp) => {
-      //         store
-      //             .dispatch("fetchList", {url, params})
-      //             .then((resp) => {
-      //               this.dataSource = resp.data?.results;
-      //               this.pagination.total = resp.data?.count || 0;
-      //               this.loading = false;
-      //             })
-      //             .catch((err) => {
-      //               store
-      //                 .dispatch("fetchList", {url:'query/quickbooks/customers/'})
-      //                 .then((resp) => {
-      //                   store
-      //                       .dispatch("fetchList", {url, params})
-      //                       .then((resp) => {
-      //                         this.dataSource = resp.data?.results;
-      //                         this.pagination.total = resp.data?.count || 0;
-      //                         this.loading = false;
-      //                       })
-      //                       .catch(() => {
-      //                         this.loading = false;
-      //                       });
-      //                 })
-      //                 .catch(() => {
-      //                   this.loading = false;
-      //                 });
-      //             });
-      //       })
-      //       .catch(() => {
-      //         this.loading = false;
-      //       });
-      //   return
-      // }
       if (this.$route?.name === 'invoice-list') {
         store
           .dispatch("fetchList", { url: 'query/quickbooks/invoices/' })
@@ -241,6 +182,42 @@ export default {
         return;
       }
 
+      // if (this.$route?.name === 'invoice-list'){
+      //   store
+      //       .dispatch("fetchList", {url:'query/quickbooks/invoices/'})
+      //       .then((resp) => {
+      //         store
+      //             .dispatch("fetchList", {url, params})
+      //             .then((resp) => {
+      //               this.dataSource = resp.data?.results;
+      //               this.pagination.total = resp.data?.count || 0;
+      //               this.loading = false;
+      //             })
+      //             .catch((err) => {
+      //               store
+      //                 .dispatch("fetchList", {url:'query/quickbooks/customers/'})
+      //                 .then((resp) => {
+      //                   store
+      //                       .dispatch("fetchList", {url, params})
+      //                       .then((resp) => {
+      //                         this.dataSource = resp.data?.results;
+      //                         this.pagination.total = resp.data?.count || 0;
+      //                         this.loading = false;
+      //                       })
+      //                       .catch(() => {
+      //                         this.loading = false;
+      //                       });
+      //                 })
+      //                 .catch(() => {
+      //                   this.loading = false;
+      //                 });
+      //             });
+      //       })
+      //       .catch(() => {
+      //         this.loading = false;
+      //       });
+      //   return
+      // }
       if (this.$route?.name === 'credit-note'){
         store
             .dispatch("fetchList", {url:'query/quickbooks/creditnotes/'})
