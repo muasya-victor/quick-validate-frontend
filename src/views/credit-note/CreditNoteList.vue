@@ -68,7 +68,7 @@ const attemptKraValidation = (credit_note_number, original_invoice_number = orig
   store.dispatch('postData', {data: {
       "pin": pin,
       "credit_note_number": credit_note_number,
-      "original_invoice_number": 1001,
+      "original_invoice_number": original_invoice_number || invoiceNumberFilter.value,
     },
     url:"validate/creditnotes"})
       .catch((err)=>{
