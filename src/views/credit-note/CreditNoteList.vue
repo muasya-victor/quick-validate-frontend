@@ -2,7 +2,7 @@
 import { ArrowRight, Delete, Download, EditPen, Open } from "@element-plus/icons-vue";
 import BaseDataTable from "@/components/base/BaseDataTable.vue";
 import ValidatedInvoice from "@/views/invoices/ValidatedInvoice.vue";
-import { reactive, ref, watch } from "vue"
+import { reactive, ref, watch, computed } from "vue"
 import store from "@/store/index.js";
 import { FormInstance, FormRules } from "element-plus";
 import { formatDate } from "@/utility/functions"
@@ -73,11 +73,6 @@ const attemptKraValidation = (credit_note_number, pin) => {
     showValidatedInvoice.value = false;
     store.state.submitLoading = false
   });
-}
-
-// Check if credit note can be validated
-const canValidateCreditNote = (creditNote) => {
-  return creditNote?.is_validated === false && invoiceNumberFilter.value !== '';
 }
 
 // Get Invoices belonging to the user
@@ -157,6 +152,11 @@ const clearInvoice = () => {
 const clearCreditNotes = () => {
   creditNumberFilter.value = ''
 }
+
+// Computed property to check if we have a valid invoice selected
+const hasValidInvoiceSelected = computed(() => {
+  return invoiceNumberFilter.value && invoiceNumberFilter.value !== '';
+})
 
 </script>
 
@@ -243,18 +243,7 @@ const clearCreditNotes = () => {
         </template>
 
         <template v-if="slotProps.column.key === 'actions'">
-          <ElButton type="primary" v-if="canValidateCreditNote(slotProps.text)" @click="attemptKraValidation(
-            slotProps.text?.credit_note_number,
-            slotProps?.text?.customer?.pin
-          )" :disabled="!invoiceNumberFilter.value" size="default" plain>
-            <template #icon>
-              <ArrowRight class="h-fit" />
-            </template>
-            <template #default>
-              {{ invoiceNumberFilter.value ? 'Validate' : 'Select Invoice First' }}
-            </template>
-          </ElButton>
-
+          <!-- Validated Invoice View Button -->
           <ElButton v-if="slotProps.text?.is_validated === true"
             @click="viewSelectedInvoice(slotProps.text?.validated_invoice_url)" size="default" plain>
             <template #icon>
@@ -263,7 +252,19 @@ const clearCreditNotes = () => {
             <template #default>View Validated Invoice</template>
           </ElButton>
 
-          <ElButton v-if="slotProps.text?.is_validated === false && !invoiceNumberFilter.value" type="info" disabled
+          <!-- Validate Button (when invoice is selected and credit note is not validated) -->
+          <ElButton type="primary" v-if="slotProps.text?.is_validated === false && hasValidInvoiceSelected" @click="attemptKraValidation(
+            slotProps.text?.credit_note_number,
+            slotProps?.text?.customer?.pin
+          )" size="default" plain>
+            <template #icon>
+              <ArrowRight class="h-fit" />
+            </template>
+            <template #default>Validate</template>
+          </ElButton>
+
+          <!-- Disabled Button (when no invoice is selected) -->
+          <ElButton v-if="slotProps.text?.is_validated === false && !hasValidInvoiceSelected" type="info" disabled
             size="default" plain>
             <template #icon>
               <ArrowRight class="h-fit" />
